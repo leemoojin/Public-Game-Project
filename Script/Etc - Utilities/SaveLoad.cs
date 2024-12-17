@@ -4,21 +4,14 @@ using UnityEngine;
 
 public class SaveLoad
 {
-    private static TimelineElement[] generator =
-        { new ScriptGenerator(), new ConversationGenerator(), new SelectGenerator() };
     
-    public static void LoadDialogue(TextAsset csv)
+    public static void LoadDialogue(TextAsset csv, out JArray arr)
     {
         string json;
         
         if (CsvToJson.ConvertCsv(csv, out json))
         {
-            JArray arr = JArray.Parse(json);
-
-            foreach (var item in arr)
-            {
-                generator[int.Parse(item["Type"].ToString())].Element(item);
-            }
+            arr = JArray.Parse(json);
         }
         else
         {
