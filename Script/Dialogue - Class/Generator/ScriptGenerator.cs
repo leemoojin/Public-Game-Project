@@ -1,27 +1,34 @@
+using System.Collections;
 using Newtonsoft.Json.Linq;
 
 public class ScriptGenerator : TimelineElement
 {
-    public override void Element(JToken input)
+    public override void Element(JToken input, IDictionary timeline)
     {
         Script script = input.ToObject<Script>();
-        script.Schedule();
+        
+        timeline.Add(script.Index, script);
     }
 }
 
-public struct Script : ITimeline, IElement
+public struct Script : IDialogue
 {
     public int Index;
     public string Context;
 
-    public bool execute()
+    public bool execute(DialogueView view)
     {
-        TimeLiner.SetCurrentContext("", Context);
+        view.SetScript(Context);
         return true;
     }
 
-    public void Schedule()
+    public void LoadLog(out string data)
     {
-        TimeLiner.ScheduleTimeline(Index, this);
+        data = Context;
+    }
+
+    public void Get(DialogueView view)
+    {
+        view.SetScript(Context);
     }
 }

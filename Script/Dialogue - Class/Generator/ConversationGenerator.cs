@@ -1,28 +1,35 @@
+using System.Collections;
+using System.Text;
 using Newtonsoft.Json.Linq;
 
 public class ConversationGenerator : TimelineElement
 {
-    public override void Element(JToken input)
+    public override void Element(JToken input, IDictionary timeline)
     {
         Conversation conv = input.ToObject<Conversation>();
-        conv.Schedule();
+        
+        timeline.Add(conv.Index, conv);
     }
 }
 
-public struct Conversation : ITimeline, IElement
+public struct Conversation : IDialogue
 {
     public int Index;
     public string Speaker;
     public string Context;
     
-    public bool execute()
+    public void Get(out string data)
     {
-        TimeLiner.SetCurrentContext(Speaker, Context);
-        return true;
+        data = Context;
     }
 
-    public void Schedule()
+    public void LoadLog(out string data)
     {
-        TimeLiner.ScheduleTimeline(Index, this);
+        data = $"{Speaker} : {Context}";
+    }
+
+    public void Get(DialogueView view)
+    {
+        view.SetContext(Speaker, Context);
     }
 }
