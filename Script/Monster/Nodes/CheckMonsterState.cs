@@ -1,20 +1,19 @@
 using MBT;
 using UnityEngine;
 
-public enum MonsterState
-{
-    IdleState,
-    PatrolState,
-    MoveState
-}
+// delete
 
-[AddComponentMenu("")]
-[MBTNode("Example/Check Monster State")]
 public class CheckMonsterState : Service
 {
 
     public IntReference state;
     public MonsterState curState;
+
+    public override void OnEnter()
+    {
+        Debug.Log("CheckMonsterState - OnEnter()");
+        base.OnEnter();
+    }
 
     public override void Task()
     {

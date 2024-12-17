@@ -8,7 +8,7 @@ public class MoveToVector : Leaf
 {
     public Vector3Reference destination;
     public NavMeshAgent agent;
-    public float stopDistance = 2f;
+    public float stopDistance = 2f;// SO
     public float updateInterval = 1f;
     private float time = 0;
 
@@ -35,15 +35,16 @@ public class MoveToVector : Leaf
         }
         if (agent.remainingDistance < stopDistance)
         {
-            //Debug.Log("MoveNavmeshAgent - Execute() - 도착 성공");
+            //Debug.Log("MoveToVector - Execute() - 도착 성공");
             return NodeResult.success;
         }
         if (agent.hasPath)
         {
             return NodeResult.running;
         }
-        //Debug.Log("MoveNavmeshAgent - Execute() - 도착 실패");
-        return NodeResult.failure;
+
+        //Debug.Log("MoveToVector - Execute() - 이동 중");
+        return NodeResult.running;
     }
 
     public override void OnExit()

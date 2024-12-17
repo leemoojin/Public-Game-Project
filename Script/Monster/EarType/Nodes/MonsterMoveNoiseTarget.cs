@@ -5,13 +5,10 @@ using UnityEngine;
 [MBTNode("Example/Monster Move Noise Target")]
 public class MonsterMoveNoiseTarget : MoveToVector
 {
-    public TransformReference noiseTarget;
-    public float moveSpeed = 10f;
+    public float moveSpeed = 10f;// SO
 
     public override void OnEnter()
     {
-        //Debug.Log("MonsterMoveNoiseTarget - OnEnter()");
-        destination.Value = noiseTarget.Value.position;
         state.Value = (int)MonsterState.MoveState;
         agent.speed = moveSpeed;
 

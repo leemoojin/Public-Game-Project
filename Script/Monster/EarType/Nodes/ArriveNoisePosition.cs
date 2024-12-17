@@ -9,13 +9,14 @@ public class ArriveNoisePosition : Leaf
 
     public override void OnEnter()
     {
+        //Debug.Log("ArriveNoisePosition - OnEnter()");
         base.OnEnter();
-        curDetectNoise.Value = 0f;
     }
 
     public override NodeResult Execute()
     {
         //Debug.Log("ArriveNoisePosition - Execute()");
+
         return NodeResult.success;
     }
 

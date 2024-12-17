@@ -5,11 +5,13 @@ using UnityEngine;
 [MBTNode("Example/Monster Patrol")]
 public class MonsterPatrol : MoveToVector
 {
-    public TransformReference variableToFailure;
+    public BoolReference variableToSkip;
     public float moveSpeed = 5f;
 
     public override void OnEnter()
     {
+        //Debug.Log("MonsterPatrol - OnEnter()");
+
         state.Value = (int)MonsterState.PatrolState;
         agent.speed = moveSpeed;
         base.OnEnter();
@@ -17,7 +19,11 @@ public class MonsterPatrol : MoveToVector
 
     public override NodeResult Execute()
     {
-        if (variableToFailure.Value != null) return NodeResult.failure;
+        if (variableToSkip.Value)
+        {
+            Debug.Log("MonsterPatrol - variableToSkip()");
+            return NodeResult.failure;
+        }
         return base.Execute();
     }
 }

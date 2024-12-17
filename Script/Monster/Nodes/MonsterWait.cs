@@ -6,18 +6,23 @@ using UnityEngine;
 public class MonsterWait : Wait
 {
     public IntReference state;
-    public TransformReference variableToFailure;
+    public BoolReference variableToSkip;
 
 
     public override void OnEnter()
     {
-        base.OnEnter();
+        //Debug.Log("MonsterWait - OnEnter()");
         state.Value = (int)MonsterState.IdleState;
+        base.OnEnter();
     }
 
     public override NodeResult Execute()
     {
-        if (variableToFailure.Value != null) return NodeResult.failure;
+        if (variableToSkip.Value)
+        {
+            Debug.Log("MonsterWait - Execute() - variableToSkip");
+            return NodeResult.failure; 
+        }
         return base.Execute();
     }
 }
