@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,6 +24,13 @@ public class PlayerInteractable : MonoBehaviour
     [field: SerializeField] private Image holdInteract;
     private float holdDuration = 0f;
 
+    [Header("UI")]
+    public GameObject interactUI;
+    public Text objectText;
+    public Text interactKey;
+    public Text interactType;
+
+
     private void Start()
     {
         _camera = Camera.main;       
@@ -37,7 +45,7 @@ public class PlayerInteractable : MonoBehaviour
     }
 
     private void PerformRaycast()
-    {
+    {   
         Ray ray = _camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2));
         RaycastHit hit;
 
@@ -52,14 +60,18 @@ public class PlayerInteractable : MonoBehaviour
          
                 reticle.GetComponent<Image>().sprite = ringImg;
                 reticle.transform.localScale = new Vector3(1.5f,1.5f,1f);
-                return;
+
                 // set ui text, image 
+                SetUIPrompt();
+                return;
             }
 
             if (!curInteractable.IsInteractable)
             {
                 reticle.GetComponent<Image>().sprite = dotImg;
                 reticle.transform.localScale = Vector3.one;
+
+                SetUIPrompt();
             }
         }
         else
@@ -68,7 +80,27 @@ public class PlayerInteractable : MonoBehaviour
             curInteractable = null;
             reticle.GetComponent<Image>().sprite = dotImg;
             reticle.transform.localScale = Vector3.one;
+            SetUIPrompt();
         }        
+    }
+
+    public void SetUIPrompt()
+    {
+        if (curInteractable != null)
+        {
+            if (curInteractable.IsInteractable)
+            {
+                objectText.text = curInteractable.ObjectName;
+                interactKey.text = curInteractable.InteractKey;
+                interactType.text = curInteractable.InteractType;
+                interactUI.SetActive(true);
+                return;
+            }
+
+            
+        }
+
+        interactUI.SetActive(false);
     }
 
     public void OnInteracted()
@@ -84,6 +116,7 @@ public class PlayerInteractable : MonoBehaviour
         else
         {
             curInteractable.Interact();
+            SetUIPrompt();
         }
     }
 
@@ -115,6 +148,7 @@ public class PlayerInteractable : MonoBehaviour
         if (holdDuration >= curInteractable.InteractHoldTime)
         {
             curInteractable.Interact();
+            SetUIPrompt();
             holdDuration = 0f;
             holdInteract.fillAmount = 0f;
         }

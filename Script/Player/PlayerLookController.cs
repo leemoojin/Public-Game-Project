@@ -8,9 +8,6 @@ public class PlayerLookController : MonoBehaviour
     [field: SerializeField] public NoiseSettings WalkHeadMove { get; private set; }
     [field: SerializeField] public NoiseSettings CrouchHeadMove { get; private set; }
 
-
-
-
     public CinemachineVirtualCamera playerVC;
     private CinemachinePOV _pov;
     private CinemachineBasicMultiChannelPerlin noise;

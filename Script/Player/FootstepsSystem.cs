@@ -41,6 +41,7 @@ public class FootstepsSystem : MonoBehaviour
     public void PlayStepSound(States curstate)
     {
         if (stepAS.isPlaying) return;
+        if (CurGround == Grounds.Untagged) return;
 
         PlayerSoundData tempData = null;
         if (curstate == States.WalkState)
