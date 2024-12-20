@@ -6,12 +6,20 @@ namespace NPC
     [Flags]
     public enum NPCState
     {
-        Wait,
-        Idle,
-        Move,
-        Run,
-        Crouch,
-        Dead
+        Wait = 1 << 0,
+        Idle = 1 << 1,
+        Move = 1 << 2,
+        Run = 1 << 3,
+        Crouch = 1 << 4,
+        Dead = 1 << 5
+    }
+
+    [Flags]
+    public enum NPCInteract
+    {
+        CanTalk = 1 << 0,
+        CanFollow = 1 << 1,
+        CanRepeat = 1 << 2
     }
 }
 
