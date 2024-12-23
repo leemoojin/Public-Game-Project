@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d327cafddd3f8054da8e64171e49ba94, type: 3}
+  m_Name: NPCDataSO_JHS
+  m_EditorClassIdentifier: 
+  <Data>k__BackingField:
+    <NPCName>k__BackingField: Jae Hyeongseop
+    <InteractKey>k__BackingField: E
+    <InteractType>k__BackingField: Interact
+    <BaseSpeed>k__BackingField: 15
+    <NearDistance>k__BackingField: 3.5
+    <FarDistance>k__BackingField: 12
+    <WalkSpeedModifier>k__BackingField: 1
+    <RunSpeedModifier>k__BackingField: 1.8
+    <CrouchSpeedModifier>k__BackingField: 0.2
