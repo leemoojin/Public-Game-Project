@@ -19,7 +19,8 @@ namespace NPC
     {
         CanTalk = 1 << 0,
         CanFollow = 1 << 1,
-        CanRepeat = 1 << 2
+        CanRepeat = 1 << 2,
+        HaveDestination = 1 << 3
     }
 }
 

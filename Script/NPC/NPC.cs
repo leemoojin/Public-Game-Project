@@ -19,6 +19,7 @@ namespace NPC
         [field: Header("State")]
         public NPCState curState;
 
+        // SO
         // Player UI
         public string ObjectName { get; set; }
         public string InteractKey { get; set; }
@@ -50,9 +51,16 @@ namespace NPC
                 Debug.Log("NPC - Interact() - 대화 시작");
             }
 
+            if ((NPCInteract & NPCInteract.HaveDestination) == NPCInteract.HaveDestination)
+            {
+                
+            }
+
             if ((NPCInteract & NPCInteract.CanFollow) == NPCInteract.CanFollow)
             {
                 Debug.Log("NPC - Interact() - 팔로우 시작");
+                BB.GetVariable<Variable<float>>("nearDistance").Value = NPCData.Data.NearDistance;
+                BB.GetVariable<Variable<float>>("farDistance").Value = NPCData.Data.FarDistance;
                 BB.GetVariable<Variable<bool>>("isFollow").Value = true;
             }
 
