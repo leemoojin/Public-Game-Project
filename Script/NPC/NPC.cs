@@ -10,6 +10,12 @@ namespace NPC
         [field: Header("References")]
         [field: SerializeField] public NPCDataSO NPCData { get; private set; }
         public Blackboard BB;
+        public Transform player;
+        public Transform self;
+
+        [field: Header("Animations")]
+        [field: SerializeField] public NPCAnimationData AnimationData { get; private set; }
+        public Animator animator;
 
         [field: Header("Interactable")]
         [field: SerializeField] public bool IsInteractable { get; set; }
@@ -25,30 +31,55 @@ namespace NPC
         public string InteractKey { get; set; }
         public string InteractType { get; set; }
 
+        private bool _hasReachedPlayer = false;
+        private bool _lookAtPlayer = false;
+        
+
+
+        private void Awake()
+        {
+            AnimationData.Initialize();
+        }
 
         private void Start()
         {
             ObjectName = NPCData.Data.NPCName;
             InteractKey = NPCData.Data.InteractKey;
             InteractType = NPCData.Data.InteractType;
+            curState = NPCState.Idle;
+            StartAnimation(AnimationData.IdleParameterHash);
 
-            //Debug.Log($"npc key, {_blackboard.variables[0].key}");          
-            //Debug.Log($"npc GetVariable, {_blackboard.GetVariable<Variable<bool>>(_blackboard.variables[0].key).Value}");
+            if (BB != null)
+            {
+                BB.GetVariable<Variable<float>>("nearDistance").Value = NPCData.Data.NearDistance;
+                BB.GetVariable<Variable<float>>("farDistance").Value = NPCData.Data.FarDistance;
+                BB.GetVariable<Variable<float>>("baseSpeed").Value = NPCData.Data.BaseSpeed;
+                BB.GetVariable<Variable<float>>("walkModifier").Value = NPCData.Data.WalkSpeedModifier;
+                BB.GetVariable<Variable<float>>("runModifier").Value = NPCData.Data.RunSpeedModifier;
+                BB.GetVariable<Variable<float>>("crouchModifier").Value = NPCData.Data.CrouchSpeedModifier;
+                BB.GetVariable<Variable<int>>("curState").Value = (int)curState;
+            }
+        }
 
-            //NPCState state = NPCState.Move | NPCState.Dead;
-            //curState = state;
-            //Debug.Log($"state, {state}");          
+        private void Update()
+        {
+            if (!_hasReachedPlayer && _lookAtPlayer)
+            {
+                LookAtPlayer();
+            }
         }
 
         public void Interact()
         {
             //Debug.Log("NPC - NPC와 상호작용 성공");
+            _hasReachedPlayer = false;
+            _lookAtPlayer = true;
 
             if ((NPCInteract & NPCInteract.CanRepeat) != NPCInteract.CanRepeat) IsInteractable = false;
 
             if ((NPCInteract & NPCInteract.CanTalk) == NPCInteract.CanTalk)
             {
-                Debug.Log("NPC - Interact() - 대화 시작");
+                //Debug.Log("NPC - Interact() - 대화 시작");
             }
 
             if ((NPCInteract & NPCInteract.HaveDestination) == NPCInteract.HaveDestination)
@@ -58,12 +89,52 @@ namespace NPC
 
             if ((NPCInteract & NPCInteract.CanFollow) == NPCInteract.CanFollow)
             {
-                Debug.Log("NPC - Interact() - 팔로우 시작");
-                BB.GetVariable<Variable<float>>("nearDistance").Value = NPCData.Data.NearDistance;
-                BB.GetVariable<Variable<float>>("farDistance").Value = NPCData.Data.FarDistance;
+                //Debug.Log("NPC - Interact() - 팔로우 시작");
+                StopAnimation(AnimationData.IdleParameterHash);
+                StartAnimation(AnimationData.FollowParameterHash);
+              
                 BB.GetVariable<Variable<bool>>("isFollow").Value = true;
             }
 
+        }
+
+        private void LookAtPlayer()
+        {     
+            Vector3 direction = player.position - self.position;
+            direction.y = 0;
+
+            if (direction != Vector3.zero)
+            {
+                // 목표 회전 값 계산
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+                // 현재 회전에서 목표 회전으로 천천히 이동
+                self.rotation = Quaternion.Lerp(
+                    self.rotation,
+                    targetRotation,
+                    Time.deltaTime * 2f
+                );
+
+                // 목표와의 각도 차이를 계산
+                float angleDifference = Quaternion.Angle(self.rotation, targetRotation);
+
+                // 각도 차이가 임계값 이하이면 회전 멈춤
+                if (angleDifference <= 0.2f)
+                {
+                    _hasReachedPlayer = true;
+                    _lookAtPlayer = false;
+                }
+            }
+        }
+
+        protected void StartAnimation(int animationHash)
+        {
+            animator.SetBool(animationHash, true);
+        }
+
+        protected void StopAnimation(int animationHash)
+        {
+            animator.SetBool(animationHash, false);
         }
     }
 }

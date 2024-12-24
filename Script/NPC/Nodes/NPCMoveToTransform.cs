@@ -6,11 +6,18 @@ using UnityEngine;
 public class NPCMoveToTransform : MoveToTransform
 {
     public FloatReference nearDistance;
-
+    public FloatReference baseSpeed;
+    public FloatReference speedModifier;
+    public IntReference curState;
+    public BoolReference isIdle;
+    public FloatReference distance;
+    public FloatReference distanceToplayer;
 
     public override void OnEnter()
     {
-        stopDistance = nearDistance.Value;
         base.OnEnter();
+        isIdle.Value = false;
+        stopDistance = nearDistance.Value;
+        agent.speed = baseSpeed.Value * speedModifier.Value;
     }
 }
