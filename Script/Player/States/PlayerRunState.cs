@@ -11,6 +11,7 @@ public class PlayerRunState : PlayerGroundState
     {
         base.Enter();
         //Debug.Log("PlayerRunState - Enter()");
+        stateMachine.Player.CurState = PlayerEnum.PlayerState.RunState;
         stateMachine.MovementSpeedModifier = stateMachine.Player.Data.GroundData.RunSpeedModifier;
         //Debug.Log($"PlayerRunState - Enter() - MovementSpeedModifier : {stateMachine.MovementSpeedModifier}");
         stateMachine.Player.SumNoiseAmount = 12f;

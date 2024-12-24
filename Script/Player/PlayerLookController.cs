@@ -34,15 +34,15 @@ public class PlayerLookController : MonoBehaviour
     {
         playerTransform.rotation = Quaternion.Euler(0, _pov.m_HorizontalAxis.Value, 0);
 
-        if (player.CurState == States.RunState)
+        if (player.CurState == PlayerEnum.PlayerState.RunState)
         {
             noise.m_NoiseProfile = RunHeadMove;
         }
-        else if (player.CurState == States.WalkState)
+        else if (player.CurState == PlayerEnum.PlayerState.WalkState)
         {
             noise.m_NoiseProfile = WalkHeadMove;
         }
-        else if (player.CurState == States.CrouchState)
+        else if (player.CurState == PlayerEnum.PlayerState.CrouchState)
         {
             noise.m_NoiseProfile = CrouchHeadMove;
         }

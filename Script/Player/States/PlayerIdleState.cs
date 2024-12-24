@@ -10,6 +10,7 @@ public class PlayerIdleState : PlayerGroundState
     public override void Enter()
     {
         base.Enter();
+        stateMachine.Player.CurState = PlayerEnum.PlayerState.IdleState;
         //Debug.Log("PlayerIdleState - Enter()");
     }
 

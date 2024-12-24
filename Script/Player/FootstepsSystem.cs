@@ -1,12 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-
-public enum Grounds
-{
-    Untagged,
-    Concrete,
-    Wet
-}
+using static PlayerEnum;
 
 public class FootstepsSystem : MonoBehaviour
 {    
@@ -38,23 +32,23 @@ public class FootstepsSystem : MonoBehaviour
         if (hit.collider.tag == "Wet") CurGround = Grounds.Wet;
     }
 
-    public void PlayStepSound(States curstate)
+    public void PlayStepSound(PlayerState curstate)
     {
         if (stepAS.isPlaying) return;
         if (CurGround == Grounds.Untagged) return;
 
         PlayerSoundData tempData = null;
-        if (curstate == States.WalkState)
+        if (curstate == PlayerState.WalkState)
         {
             if (CurGround == Grounds.Concrete) tempData = FindSoundData("ConcreteWalk");
             else if (CurGround == Grounds.Wet) tempData = FindSoundData("WetWalk");
         }
-        else if (curstate == States.RunState)
+        else if (curstate == PlayerState.RunState)
         {
             if (CurGround == Grounds.Concrete) tempData = FindSoundData("ConcreteRun");
             else if (CurGround == Grounds.Wet) tempData = FindSoundData("WetRun");
         }
-        else if (curstate == States.CrouchState)
+        else if (curstate == PlayerState.CrouchState)
         {
             if (CurGround == Grounds.Concrete) tempData = FindSoundData("ConcreteCrouch");
             else if (CurGround == Grounds.Wet) tempData = FindSoundData("WetCrouch");

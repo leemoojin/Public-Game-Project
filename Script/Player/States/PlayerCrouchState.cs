@@ -11,7 +11,7 @@ public class PlayerCrouchState : PlayerGroundState
     {
         base.Enter();
         //Debug.Log("PlayerCrouchState - Enter()");
-
+        stateMachine.Player.CurState = PlayerEnum.PlayerState.CrouchState;
         stateMachine.Player.transform.localScale = new Vector3(stateMachine.Player.transform.localScale.x, groundData.CrouchHeight, stateMachine.Player.transform.localScale.z);
         stateMachine.MovementSpeedModifier = groundData.CrouchSpeedModifier;
     }

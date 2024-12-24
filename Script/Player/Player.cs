@@ -6,7 +6,7 @@ public class Player : MonoBehaviour, INoise
     [field: SerializeField] public PlayerDataSO Data { get; private set; }
 
     [field: Header("State")]
-    [field: SerializeField] public States CurState { get; set; }
+    [field: SerializeField] public PlayerEnum.PlayerState CurState { get; set; }
 
     // INoise
     [field: Header("Noise")]

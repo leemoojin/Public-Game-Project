@@ -1,12 +1,4 @@
 using System;
-using UnityEngine;
-public enum States
-{
-    IdleState,
-    WalkState,
-    RunState,
-    CrouchState
-}
 
 public class PlayerStateMachine : StateMachine
 {
@@ -48,8 +40,7 @@ public class PlayerStateMachine : StateMachine
     public override void ChangeState(IState state)
     {
         base.ChangeState(state);
-
-        string tempString = state.ToString().Replace("Player", "");
-        Player.CurState = (States)Enum.Parse(typeof(States), tempString);
+        //string tempString = state.ToString().Replace("Player", "");
+        //Player.CurState = (PlayerEnum.PlayerState)Enum.Parse(typeof(PlayerEnum.PlayerState), tempString);
     }
 }
