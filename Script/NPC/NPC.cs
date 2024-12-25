@@ -14,7 +14,6 @@ namespace NPC
         public Transform self;
 
         [field: Header("Animations")]
-        [field: SerializeField] public NPCAnimationData AnimationData { get; private set; }
         public Animator animator;
 
         [field: Header("Interactable")]
@@ -35,19 +34,13 @@ namespace NPC
         private bool _lookAtPlayer = false;
         
 
-
-        private void Awake()
-        {
-            AnimationData.Initialize();
-        }
-
         private void Start()
         {
             ObjectName = NPCData.Data.NPCName;
             InteractKey = NPCData.Data.InteractKey;
             InteractType = NPCData.Data.InteractType;
             curState = NPCState.Idle;
-            StartAnimation(AnimationData.IdleParameterHash);
+            animator.SetBool("Idle", true);
 
             if (BB != null)
             {
@@ -87,15 +80,14 @@ namespace NPC
                 
             }
 
-            if ((NPCInteract & NPCInteract.CanFollow) == NPCInteract.CanFollow)
+            if ((NPCInteract & NPCInteract.CanFollow) == NPCInteract.CanFollow && !BB.GetVariable<Variable<bool>>("isFollow").Value)
             {
-                //Debug.Log("NPC - Interact() - 팔로우 시작");
-                StopAnimation(AnimationData.IdleParameterHash);
-                StartAnimation(AnimationData.FollowParameterHash);
+                Debug.Log("NPC - Interact() - 팔로우 시작");
+                animator.SetBool("Idle", false);
+                animator.SetBool("@Follow", true);
               
                 BB.GetVariable<Variable<bool>>("isFollow").Value = true;
             }
-
         }
 
         private void LookAtPlayer()
@@ -125,16 +117,6 @@ namespace NPC
                     _lookAtPlayer = false;
                 }
             }
-        }
-
-        protected void StartAnimation(int animationHash)
-        {
-            animator.SetBool(animationHash, true);
-        }
-
-        protected void StopAnimation(int animationHash)
-        {
-            animator.SetBool(animationHash, false);
         }
     }
 }
