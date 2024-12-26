@@ -12,9 +12,8 @@ public class NPCRun : NPCMoveToTransform
     public override void OnEnter()
     {
         if (animator.GetBool("Run")) return;
-
         base.OnEnter();
-        curState.Value = (int)((NPCState)curState.Value | NPCState.Run & ~NPCState.Idle & ~NPCState.Move);
+
         animator.SetBool("Idle", false);
         animator.SetBool("Walk", false);
         animator.SetBool("Run", true);

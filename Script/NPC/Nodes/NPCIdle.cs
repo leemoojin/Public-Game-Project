@@ -13,10 +13,8 @@ public class NPCIdle : Leaf
     {
         //Debug.Log("NPCIdle - OnEnter() - NPCIdle");
         if (animator.GetBool("Idle")) return;
-
         base.OnEnter();
 
-        curState.Value = (int)((NPCState)curState.Value | NPCState.Idle & ~NPCState.Move & ~NPCState.Run);
         animator.SetBool("Walk", false);
         animator.SetBool("Run", false);
         animator.SetBool("Idle", true);

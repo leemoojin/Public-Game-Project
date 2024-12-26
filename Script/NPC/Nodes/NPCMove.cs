@@ -10,12 +10,9 @@ public class NPCMove : NPCMoveToTransform
 
     public override void OnEnter()
     {
-
+        if (animator.GetBool("Walk")) return;
         base.OnEnter();
 
-        if (animator.GetBool("Walk")) return;
-
-        curState.Value = (int)((NPCState)curState.Value | NPCState.Move & ~NPCState.Idle & ~NPCState.Run);
         animator.SetBool("Idle", false);
         animator.SetBool("Run", false);
         animator.SetBool("Walk", true);

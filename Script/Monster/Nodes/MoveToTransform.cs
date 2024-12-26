@@ -17,6 +17,8 @@ public class MoveToTransform : Leaf
     {
         time = 0;
         agent.isStopped = false;
+        //Debug.Log("agent.isStopped = false");
+
         agent.SetDestination(destination.Value.position);
     }
 
@@ -33,16 +35,21 @@ public class MoveToTransform : Leaf
         // Check if path is ready
         if (agent.pathPending)
         {
+            //Debug.Log("if (agent.pathPending)");
+            if (agent.isStopped) agent.isStopped = false;
             return NodeResult.running;
         }
         // Check if agent is very close to destination
         if (agent.remainingDistance < stopDistance)
         {
+            //Debug.Log("if (agent.remainingDistance < stopDistance)");
             return NodeResult.success;
         }
         // Check if there is any path (if not pending, it should be set)
         if (agent.hasPath)
         {
+            //Debug.Log("if (agent.hasPath)");
+            if (agent.isStopped) agent.isStopped = false;
             return NodeResult.running;
         }
         // By default return failure
@@ -52,6 +59,8 @@ public class MoveToTransform : Leaf
     public override void OnExit()
     {
         agent.isStopped = true;
+        //Debug.Log("agent.isStopped = true");
+
         // agent.ResetPath();
     }
 

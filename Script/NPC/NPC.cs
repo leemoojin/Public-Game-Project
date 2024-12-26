@@ -82,7 +82,7 @@ namespace NPC
 
             if ((NPCInteract & NPCInteract.CanFollow) == NPCInteract.CanFollow && !BB.GetVariable<Variable<bool>>("isFollow").Value)
             {
-                Debug.Log("NPC - Interact() - 팔로우 시작");
+                //Debug.Log("NPC - Interact() - 팔로우 시작");
                 animator.SetBool("Idle", false);
                 animator.SetBool("@Follow", true);
               
