@@ -3,24 +3,20 @@ using UnityEngine;
 using static PlayerEnum;
 
 public class FootstepsSystem : MonoBehaviour
-{    
-    public Player Player { get; private set; }
-    public List<PlayerSoundData> stepSoundList;
-
+{
+    [field: SerializeField] public GameObject Unit { get; private set; }
     [field: SerializeField] public Grounds CurGround { get; private set; }
-    public Transform step;
+    public Player Player { get; private set; }
 
-    private AudioSource stepAS;
-
+    public List<SoundData> stepSoundList;
+    public AudioSource stepAS;
 
     private void Awake()
     {
-        Player = GetComponent<Player>();        
-    }
-
-    private void Start()
-    {
-        stepAS = step.GetComponent<AudioSource>();
+        if (LayerMask.LayerToName(Unit.layer) == "Player")
+        {
+            Player = Unit.GetComponent<Player>();
+        }
     }
 
 
@@ -37,7 +33,7 @@ public class FootstepsSystem : MonoBehaviour
         if (stepAS.isPlaying) return;
         if (CurGround == Grounds.Untagged) return;
 
-        PlayerSoundData tempData = null;
+        SoundData tempData = null;
         if (curstate == PlayerState.WalkState)
         {
             if (CurGround == Grounds.Concrete) tempData = FindSoundData("ConcreteWalk");
@@ -58,13 +54,14 @@ public class FootstepsSystem : MonoBehaviour
         stepAS.volume = tempData.volume + (Random.Range(-0.1f, 0.1f));
         stepAS.pitch = tempData.pitch + (Random.Range(-0.1f, 0.1f));
         stepAS.Play();
+        Debug.Log(tempData.noiseAmount);
         Player.CurNoiseAmount += tempData.noiseAmount;
         if (Player.CurNoiseAmount >= Player.SumNoiseAmount) Player.CurNoiseAmount = Player.SumNoiseAmount;
     }
 
-    private PlayerSoundData FindSoundData(string tag)
+    private SoundData FindSoundData(string tag)
     {
-        PlayerSoundData tempData = null;
+        SoundData tempData = null;
 
         for (int i = 0; i < stepSoundList.Count; i++)
         {
