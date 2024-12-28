@@ -11,7 +11,7 @@ public class CheckMonsterState : Service
 
     public override void OnEnter()
     {
-        Debug.Log("CheckMonsterState - OnEnter()");
+        //Debug.Log("CheckMonsterState - OnEnter()");
         base.OnEnter();
     }
 

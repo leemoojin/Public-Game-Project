@@ -54,7 +54,7 @@ public class FootstepsSystem : MonoBehaviour
         stepAS.volume = tempData.volume + (Random.Range(-0.1f, 0.1f));
         stepAS.pitch = tempData.pitch + (Random.Range(-0.1f, 0.1f));
         stepAS.Play();
-        Debug.Log(tempData.noiseAmount);
+        //Debug.Log(tempData.noiseAmount);
         Player.CurNoiseAmount += tempData.noiseAmount;
         if (Player.CurNoiseAmount >= Player.SumNoiseAmount) Player.CurNoiseAmount = Player.SumNoiseAmount;
     }
