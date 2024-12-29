@@ -13,7 +13,7 @@ public class NPCRun : NPCMoveToTransform
     {
         if (animator.GetBool("Run")) return;
         base.OnEnter();
-
+        animator.SetBool("@Crouch", false);
         animator.SetBool("Idle", false);
         animator.SetBool("Walk", false);
         animator.SetBool("Run", true);

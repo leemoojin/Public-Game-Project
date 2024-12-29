@@ -12,7 +12,7 @@ public class MonsterPatrol : MoveToVector
     {
         //Debug.Log("MonsterPatrol - OnEnter()");
 
-        state.Value = (int)MonsterState.PatrolState;
+        //state.Value = (int)MonsterState.PatrolState;
         agent.speed = moveSpeed;
         base.OnEnter();
     }
@@ -21,7 +21,7 @@ public class MonsterPatrol : MoveToVector
     {
         if (variableToSkip.Value)
         {
-            Debug.Log("MonsterPatrol - variableToSkip()");
+            //Debug.Log("MonsterPatrol - variableToSkip()");
             return NodeResult.failure;
         }
         return base.Execute();

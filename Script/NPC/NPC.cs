@@ -41,6 +41,7 @@ namespace NPC
             InteractType = NPCData.Data.InteractType;
             curState = NPCState.Idle;
             animator.SetBool("Idle", true);
+            self = transform;
 
             if (BB != null)
             {
@@ -93,6 +94,7 @@ namespace NPC
         private void LookAtPlayer()
         {     
             Vector3 direction = player.position - self.position;
+
             direction.y = 0;
 
             if (direction != Vector3.zero)
