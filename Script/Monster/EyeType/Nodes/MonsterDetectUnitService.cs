@@ -8,7 +8,7 @@ using UnityEngine.Rendering;
 public class MonsterDetectUnitService : Service
 {
 
-    public BoolReference variableToSet;// isUnitDetect
+    public BoolReference variableToSet;// isDetect
     public TransformReference self;
     public TransformReference detectorHigh;
     public TransformReference detectorLow;
@@ -94,9 +94,10 @@ public class MonsterDetectUnitService : Service
     {
         if (detectList.Count == 0)
         {
-            target.Value = null;
-            variableToSet.Value = false;
+            //target.Value = null;
+            //variableToSet.Value = false;
             detectList.Clear();
+            if(target.Value == null) variableToSet.Value = false;
             //Debug.Log("발견 못함");
             return;
         }

@@ -9,7 +9,6 @@ public class MonsterMovePlayerTarget : MoveToTransform
     public FloatReference distanceToTarget;
     public FloatReference moveRange;
 
-
     public float moveSpeed = 10f;// SO
 
     public override void OnEnter()
