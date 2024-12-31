@@ -6,10 +6,11 @@ using UnityEngine;
 public class MonsterMoveNoiseTarget : MoveToVector
 {
     public float moveSpeed = 10f;// SO
+    public IntReference curState;
 
     public override void OnEnter()
     {
-        state.Value = (int)MonsterState.MoveState;
+        curState.Value = (int)EarTypeMonsterState.MoveState;
         agent.speed = moveSpeed;
 
         base.OnEnter();

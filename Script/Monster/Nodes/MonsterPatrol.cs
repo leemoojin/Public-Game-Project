@@ -6,14 +6,27 @@ using UnityEngine;
 public class MonsterPatrol : MoveToVector
 {
     public BoolReference variableToSkip;
-    public float moveSpeed = 5f;
+    public FloatReference baseSpeed;
+    public FloatReference walkSpeedModifier;
+    public IntReference curState;
+    
+    public Animator animator;
+    //public float moveSpeed = 5f;
 
     public override void OnEnter()
     {
         //Debug.Log("MonsterPatrol - OnEnter()");
 
         //state.Value = (int)MonsterState.PatrolState;
-        agent.speed = moveSpeed;
+        agent.speed = baseSpeed.Value * walkSpeedModifier.Value;
+        curState.Value = (int)EyeTypeMonsterState.Walk;
+        //Debug.Log($"MonsterPatrol - OnEnter() - curState walk : {(EyeTypeMonsterState)curState.Value}");
+
+        animator.SetBool("Idle", false);
+        animator.SetBool("Run", false);
+        animator.SetBool("Attack", false);
+        animator.SetBool("Walk", true);
+
         base.OnEnter();
     }
 

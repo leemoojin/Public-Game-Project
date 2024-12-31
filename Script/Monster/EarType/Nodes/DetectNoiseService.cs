@@ -58,7 +58,7 @@ public class DetectNoiseService : Service
     {       
         if (Vector3.Distance(self.Value.position, noiseMaker.transform.position) <= detectRange && curDetectNoise.Value >= detectNoiseMax)
         {
-            if (curState.Value == (int)MonsterState.FocusAround) isFocusAround.Value = false;
+            if (curState.Value == (int)EarTypeMonsterState.FocusAround) isFocusAround.Value = false;
 
             variableToSetBool.Value = true;
             targetPos.Value = biggestNoiseObj.transform.position;
@@ -67,7 +67,7 @@ public class DetectNoiseService : Service
 
         if (Vector3.Distance(self.Value.position, noiseMaker.transform.position) <= detectRange * 0.5f && curDetectNoise.Value >= detectNoiseMin)
         {
-            if (curState.Value == (int)MonsterState.FocusAround) isFocusAround.Value = false;
+            if (curState.Value == (int)EarTypeMonsterState.FocusAround) isFocusAround.Value = false;
 
             variableToSetBool.Value = true;
             targetPos.Value = biggestNoiseObj.transform.position;

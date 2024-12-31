@@ -28,7 +28,7 @@ public class DetectPlayerService : Service
     public override void Task()
     {
         // 플레이어 탐지시, 탐지 생략 후 추적
-        if (state.Value == (int)MonsterState.MoveState) return;
+        if (state.Value == (int)EarTypeMonsterState.MoveState) return;
 
         SetRange();
         //Debug.Log($"DetectPlayerService - Task() - {_curFindRange}");

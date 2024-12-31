@@ -120,6 +120,31 @@ namespace NPC
                 }
             }
         }
+
+        
+
+        private void OnTriggerEnter(Collider other)
+        {
+            Debug.Log($"OnTriggerEnter - 공격당함, {other.gameObject.name}");
+            if (other.gameObject.layer == 8)
+            {
+                NPCDead();
+            }
+        }
+
+        private void NPCDead()
+        {
+            BB.GetVariable<Variable<bool>>("isFollow").Value = false;
+            animator.SetBool("@Follow", false);
+            animator.SetBool("@Crouch", false);
+            animator.SetBool("Idle", false);
+            animator.SetBool("Walk", false);
+            animator.SetBool("Run", false);
+            animator.SetBool("Dead", true);
+
+        }
+
+
     }
 }
 

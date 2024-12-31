@@ -5,16 +5,37 @@ using UnityEngine;
 [MBTNode("Example/Monster Move Player Target")]
 public class MonsterMovePlayerTarget : MoveToTransform
 {
-    public IntReference state;
+    public IntReference curState;
+    public IntReference monsterType;
     public FloatReference distanceToTarget;
     public FloatReference moveRange;
+    public FloatReference baseSpeed;
+    public FloatReference runSpeedModifier;
 
     public float moveSpeed = 10f;// SO
+    public Animator animator;
+
 
     public override void OnEnter()
     {
-        state.Value = (int)MonsterState.MoveState;
-        agent.speed = moveSpeed;
+        if (monsterType.Value == 1)
+        {
+            curState.Value = (int)EyeTypeMonsterState.Run;
+            agent.speed = baseSpeed.Value * runSpeedModifier.Value;
+            //Debug.Log($"MonsterMovePlayerTarget - OnEnter() - curState run : {(EyeTypeMonsterState)curState.Value}");
+
+            animator.SetBool("Run", true);
+            animator.SetBool("Walk", false);
+            animator.SetBool("Idle", false);
+            animator.SetBool("Attack", false);
+        }
+        else if (monsterType.Value == 2)
+        {
+            curState.Value = (int)EarTypeMonsterState.MoveState;
+            agent.speed = moveSpeed;
+        }
+
+        
         base.OnEnter();
     }
 
@@ -26,5 +47,10 @@ public class MonsterMovePlayerTarget : MoveToTransform
         }        
         
         return base.Execute();
+    }
+
+    public override void OnExit()
+    {
+        agent.isStopped = true;
     }
 }

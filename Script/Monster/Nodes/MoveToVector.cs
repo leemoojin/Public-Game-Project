@@ -12,7 +12,7 @@ public class MoveToVector : Leaf
     public float updateInterval = 1f;
     private float time = 0;
 
-    public IntReference state;
+    //public IntReference state;
 
     public override void OnEnter()
     {

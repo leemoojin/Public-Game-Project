@@ -13,7 +13,7 @@ public class FocusAroundWait : Wait
     {
         Debug.Log("FocusAroundWait - OnEnter()");
         variableToSkip.Value = true;
-        state.Value = (int)MonsterState.FocusAround;
+        state.Value = (int)EarTypeMonsterState.FocusAround;
         base.OnEnter();
     }
 
