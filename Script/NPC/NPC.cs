@@ -65,7 +65,6 @@ namespace NPC
 
         public void Interact()
         {
-            //Debug.Log("NPC - NPC와 상호작용 성공");
             _hasReachedPlayer = false;
             _lookAtPlayer = true;
 
@@ -73,7 +72,7 @@ namespace NPC
 
             if ((NPCInteract & NPCInteract.CanTalk) == NPCInteract.CanTalk)
             {
-                //Debug.Log("NPC - Interact() - 대화 시작");
+                // NPC dialog
             }
 
             if ((NPCInteract & NPCInteract.HaveDestination) == NPCInteract.HaveDestination)
@@ -83,7 +82,6 @@ namespace NPC
 
             if ((NPCInteract & NPCInteract.CanFollow) == NPCInteract.CanFollow && !BB.GetVariable<Variable<bool>>("isFollow").Value)
             {
-                //Debug.Log("NPC - Interact() - 팔로우 시작");
                 animator.SetBool("Idle", false);
                 animator.SetBool("@Follow", true);
               
@@ -99,20 +97,15 @@ namespace NPC
 
             if (direction != Vector3.zero)
             {
-                // 목표 회전 값 계산
                 Quaternion targetRotation = Quaternion.LookRotation(direction);
 
-                // 현재 회전에서 목표 회전으로 천천히 이동
                 self.rotation = Quaternion.Lerp(
                     self.rotation,
                     targetRotation,
                     Time.deltaTime * 2f
                 );
 
-                // 목표와의 각도 차이를 계산
                 float angleDifference = Quaternion.Angle(self.rotation, targetRotation);
-
-                // 각도 차이가 임계값 이하이면 회전 멈춤
                 if (angleDifference <= 0.2f)
                 {
                     _hasReachedPlayer = true;
@@ -125,8 +118,7 @@ namespace NPC
 
         private void OnTriggerEnter(Collider other)
         {
-            Debug.Log($"OnTriggerEnter - 공격당함, {other.gameObject.name}");
-            if (other.gameObject.layer == 8)
+            if (other.gameObject.layer == 8 && curState != NPCState.Dead)
             {
                 NPCDead();
             }
@@ -134,6 +126,9 @@ namespace NPC
 
         private void NPCDead()
         {
+            gameObject.layer = 0;
+            curState = NPCState.Dead;
+            BB.GetVariable<Variable<int>>("curState").Value = (int)curState;
             BB.GetVariable<Variable<bool>>("isFollow").Value = false;
             animator.SetBool("@Follow", false);
             animator.SetBool("@Crouch", false);

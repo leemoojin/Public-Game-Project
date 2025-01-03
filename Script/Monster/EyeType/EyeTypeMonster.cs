@@ -32,26 +32,5 @@ public class EyeTypeMonster : MonoBehaviour
         }
 
         animator.SetBool("Idle", true);
-
-        //curState = EyeTypeMonsterState.Idle;
-        //Debug.Log($"idle : {curState}");
-        //curState |= EyeTypeMonsterState.Walk;
-        //Debug.Log($"idle, Walk : {curState}");
-        //curState = curState | EyeTypeMonsterState.Move | EyeTypeMonsterState.Run;
-        //Debug.Log($"idle, Walk, Move, Run : {curState}");
-
-        //if ((curState & EyeTypeMonsterState.Run) == EyeTypeMonsterState.Run)
-        //{
-        //    Debug.Log($"include Run");
-        //}
-
-        //curState = curState & ~EyeTypeMonsterState.Idle & ~EyeTypeMonsterState.Walk;
-        //Debug.Log($"Move, Run : {curState}");
-        //int num = (int)curState;
-        //Debug.Log($"Move, Run int num : {num}");
-        //curState = (EyeTypeMonsterState)num;
-        //Debug.Log($"Move, Run : {curState}");
-        //curState = (EyeTypeMonsterState)num & ~EyeTypeMonsterState.Move;
-        //Debug.Log($"Run : {curState}");
     }
 }

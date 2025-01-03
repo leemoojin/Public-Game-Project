@@ -3,12 +3,13 @@ public class PlayerController : MonoBehaviour
 {
     public PlayerInputAction playerInputs { get; private set; }
     public PlayerInputAction.PlayerActions playerActions { get; private set; }
-    public PlayerInputAction.UIActions UIActions { get; private set; }
+    public PlayerInputAction.UIActions uiActions { get; private set; }
 
     private void Awake()
     {
         playerInputs = new PlayerInputAction();
         playerActions = playerInputs.Player;
+        uiActions = playerInputs.UI;
     }
 
     private void OnEnable()
@@ -24,12 +25,12 @@ public class PlayerController : MonoBehaviour
     public void OnPlayerAction()
     {
         playerActions.Enable();
-        UIActions.Disable();
+        uiActions.Disable();
     }
 
     public void OnUiAction()
     {
-        UIActions.Enable();
+        uiActions.Enable();
         playerActions.Disable();
     }
 }
