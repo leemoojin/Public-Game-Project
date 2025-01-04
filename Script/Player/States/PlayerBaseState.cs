@@ -24,14 +24,14 @@ public class PlayerBaseState : IState
 
     protected virtual void AddInputActionsCallbacks()
     {
-        stateMachine.Player.Input.playerActions.Movement.started += OnMovementStarted;
-        stateMachine.Player.Input.playerActions.Movement.canceled += OnMovementCanceled;
-        stateMachine.Player.Input.playerActions.Run.started += OnRunStarted;
-        stateMachine.Player.Input.playerActions.Run.canceled += OnRunCanceled;
-        stateMachine.Player.Input.playerActions.Crouch.started += OnCrouchStarted;
-        stateMachine.Player.Input.playerActions.Crouch.canceled += OnCrouchCanceled;
-        stateMachine.Player.Input.playerActions.Interaction.started += OnInteractionStarted;
-        stateMachine.Player.Input.playerActions.Interaction.canceled += OnInteractionCanceled;
+        stateMachine.Player.Input.Player.Movement.started += OnMovementStarted;
+        stateMachine.Player.Input.Player.Movement.canceled += OnMovementCanceled;
+        stateMachine.Player.Input.Player.Run.started += OnRunStarted;
+        stateMachine.Player.Input.Player.Run.canceled += OnRunCanceled;
+        stateMachine.Player.Input.Player.Crouch.started += OnCrouchStarted;
+        stateMachine.Player.Input.Player.Crouch.canceled += OnCrouchCanceled;
+        stateMachine.Player.Input.Player.Interaction.started += OnInteractionStarted;
+        stateMachine.Player.Input.Player.Interaction.canceled += OnInteractionCanceled;
     }
 
     protected virtual void OnInteractionStarted(InputAction.CallbackContext context)
@@ -87,14 +87,14 @@ public class PlayerBaseState : IState
 
     protected virtual void RemoveInputActionsCallbacks()
     {
-        stateMachine.Player.Input.playerActions.Movement.started -= OnMovementStarted;
-        stateMachine.Player.Input.playerActions.Movement.canceled -= OnMovementCanceled;
-        stateMachine.Player.Input.playerActions.Run.started -= OnRunStarted;
-        stateMachine.Player.Input.playerActions.Run.canceled -= OnRunCanceled;
-        stateMachine.Player.Input.playerActions.Crouch.started -= OnCrouchStarted;
-        stateMachine.Player.Input.playerActions.Crouch.canceled -= OnCrouchCanceled;
-        stateMachine.Player.Input.playerActions.Interaction.started -= OnInteractionStarted;
-        stateMachine.Player.Input.playerActions.Interaction.canceled -= OnInteractionCanceled;
+        stateMachine.Player.Input.Player.Movement.started -= OnMovementStarted;
+        stateMachine.Player.Input.Player.Movement.canceled -= OnMovementCanceled;
+        stateMachine.Player.Input.Player.Run.started -= OnRunStarted;
+        stateMachine.Player.Input.Player.Run.canceled -= OnRunCanceled;
+        stateMachine.Player.Input.Player.Crouch.started -= OnCrouchStarted;
+        stateMachine.Player.Input.Player.Crouch.canceled -= OnCrouchCanceled;
+        stateMachine.Player.Input.Player.Interaction.started -= OnInteractionStarted;
+        stateMachine.Player.Input.Player.Interaction.canceled -= OnInteractionCanceled;
     }
 
     public virtual void HandleInput()
@@ -119,7 +119,7 @@ public class PlayerBaseState : IState
 
     private Vector3 GetMovementDirection()
     {
-        Vector2 movementInput = stateMachine.Player.Input.playerActions.Movement.ReadValue<Vector2>();
+        Vector2 movementInput = stateMachine.Player.Input.Player.Movement.ReadValue<Vector2>();
         //Debug.Log($"PlayerBaseState - GetMovementDirection() - movementInput : {movementInput}");
         Vector3 forward = stateMachine.Player.transform.forward;
         Vector3 right = stateMachine.Player.transform.right;

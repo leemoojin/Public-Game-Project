@@ -26,7 +26,7 @@ public class PlayerRunState : PlayerGroundState
     public override void Update()
     {
         base.Update();
-        if (stateMachine.Player.Input.playerActions.Movement.ReadValue<Vector2>() != Vector2.zero) stateMachine.Player.FootstepsSystem.PlayStepSound(stateMachine.Player.CurState);
+        if (stateMachine.Player.Input.Player.Movement.ReadValue<Vector2>() != Vector2.zero) stateMachine.Player.FootstepsSystem.PlayStepSound(stateMachine.Player.CurState);
     }
 
     protected override void OnRunCanceled(InputAction.CallbackContext context)
@@ -40,7 +40,7 @@ public class PlayerRunState : PlayerGroundState
             return;
         }
 
-        if (stateMachine.Player.Input.playerActions.Movement.ReadValue<Vector2>() == Vector2.zero)
+        if (stateMachine.Player.Input.Player.Movement.ReadValue<Vector2>() == Vector2.zero)
         {
             stateMachine.ChangeState(stateMachine.IdleState);
         }

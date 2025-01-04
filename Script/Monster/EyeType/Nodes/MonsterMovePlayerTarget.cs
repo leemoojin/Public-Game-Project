@@ -34,7 +34,6 @@ public class MonsterMovePlayerTarget : MoveToTransform
             curState.Value = (int)EarTypeMonsterState.MoveState;
             agent.speed = moveSpeed;
         }
-
         
         base.OnEnter();
     }

@@ -26,7 +26,7 @@ public class PlayerWalkState : PlayerGroundState
     {
         base.Update();
 
-        if (stateMachine.Player.Input.playerActions.Movement.ReadValue<Vector2>() != Vector2.zero) stateMachine.Player.FootstepsSystem.PlayStepSound(stateMachine.Player.CurState);
+        if (stateMachine.Player.Input.Player.Movement.ReadValue<Vector2>() != Vector2.zero) stateMachine.Player.FootstepsSystem.PlayStepSound(stateMachine.Player.CurState);
     }
 
     protected override void OnCrouchStarted(InputAction.CallbackContext context)

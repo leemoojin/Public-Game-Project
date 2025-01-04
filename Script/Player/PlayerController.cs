@@ -1,36 +1,13 @@
 using UnityEngine;
+using UnityEngine.Windows;
+
 public class PlayerController : MonoBehaviour
 {
-    public PlayerInputAction playerInputs { get; private set; }
-    public PlayerInputAction.PlayerActions playerActions { get; private set; }
-    public PlayerInputAction.UIActions uiActions { get; private set; }
+    [field: Header("References")]
+    [SerializeField] private InputController Input { get; set; }
 
     private void Awake()
     {
-        playerInputs = new PlayerInputAction();
-        playerActions = playerInputs.Player;
-        uiActions = playerInputs.UI;
-    }
-
-    private void OnEnable()
-    {
-        playerInputs.Enable();
-    }
-
-    private void OnDisable()
-    {
-        playerInputs.Disable();
-    }
-
-    public void OnPlayerAction()
-    {
-        playerActions.Enable();
-        uiActions.Disable();
-    }
-
-    public void OnUiAction()
-    {
-        uiActions.Enable();
-        playerActions.Disable();
+        Input.Init();
     }
 }

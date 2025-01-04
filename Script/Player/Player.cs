@@ -4,6 +4,7 @@ public class Player : MonoBehaviour, INoise
 {
     [field: Header("References")]
     [field: SerializeField] public PlayerDataSO Data { get; private set; }
+    [field: SerializeField] public InputController Input { get; private set; }
 
     [field: Header("State")]
     [field: SerializeField] public PlayerEnum.PlayerState CurState { get; set; }
@@ -26,17 +27,14 @@ public class Player : MonoBehaviour, INoise
     public FootstepsSystem FootstepsSystem { get; private set; }
     public PlayerInteractable PlayerInteractable { get; private set; }
 
-    // InputAction
-    public PlayerController Input { get; private set; }
-
     private PlayerStateMachine _stateMachine;
 
     private void Awake()
     {
         //Debug.Log("Player - Awake()");
-
+        Input.Init();
+        Input.PlayerInputSwitch(true);
         Controller = GetComponent<CharacterController>();
-        Input = GetComponent<PlayerController>();
         ForceReceiver = GetComponent<ForceReceiver>();
         FootstepsSystem = GetComponent<FootstepsSystem>();
         PlayerInteractable = GetComponent<PlayerInteractable>();
