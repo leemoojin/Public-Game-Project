@@ -1,6 +1,6 @@
 ﻿using MBT;
 using UnityEngine;
-using UnityEngine.AI;
+
 [AddComponentMenu("")]
 [MBTNode("Example/Monster Attack")]
 public class MonsterAttack : Leaf
@@ -34,7 +34,7 @@ public class MonsterAttack : Leaf
 
         if (stateInfo.IsName("Attack") && stateInfo.normalizedTime >= 1.0f)
         {
-            Debug.Log($"attack end");
+            //Debug.Log($"attack end");
             isAttacking.Value = false;
             return NodeResult.success;
         }
