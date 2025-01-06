@@ -7,9 +7,11 @@ using UnityEngine;
 public class CheckPlayerStateService : Service
 {
     public IntReference curState;
-    public Player player;
     public BoolReference isCrouch;
+
+    public Player player;
     public Animator animator;
+    public CapsuleCollider collider;
 
     public override void Task()
     {
@@ -19,6 +21,8 @@ public class CheckPlayerStateService : Service
         {
             isCrouch.Value = true;
             curState.Value = (int)((NPCState)curState.Value | NPCState.Crouch);
+            collider.center = new Vector3(0f, 2.6f, 0f);
+            collider.height = 5.2f;
             animator.SetBool("@Crouch", true);
 
         }
@@ -26,6 +30,8 @@ public class CheckPlayerStateService : Service
         {
             isCrouch.Value = false;
             curState.Value = (int)((NPCState)curState.Value & ~NPCState.Crouch);
+            collider.center = new Vector3(0f, 3.5f, 0f);
+            collider.height = 7f;
             animator.SetBool("@Crouch", false);
         }
     }

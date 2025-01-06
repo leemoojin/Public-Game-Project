@@ -7,36 +7,59 @@ public class MonsterAttack : Leaf
 {
     public BoolReference isAttacking;
     public IntReference curState;
+    public TransformReference target;
 
     public Animator animator;
     private AnimatorStateInfo stateInfo;
 
-    //public TransformReference target;
+    private bool _isNPC;
+
 
     public override void OnEnter()
     {        
         //Debug.Log("MonsterAttack - OnEnter()");
         base.OnEnter();
 
-        isAttacking.Value = true;
-        curState.Value = (int)EyeTypeMonsterState.Attack;
-        //Debug.Log($"MonsterAttack - OnEnter() - curState Attack : {(EyeTypeMonsterState)curState.Value}");
+        if (target.Value.gameObject.layer == 3)
+        {
+            _isNPC = false;
+            isAttacking.Value = true;
+            curState.Value = (int)EyeTypeMonsterState.Attack;
+            Debug.Log($"MonsterAttack - OnEnter() - 플레이어 사망");
+            animator.SetBool("Run", false);
+            animator.SetBool("Walk", false);
+            animator.SetBool("Idle", true);
+            animator.SetBool("Attack", false);
 
-        animator.SetBool("Run", false);
-        animator.SetBool("Walk", false);
-        animator.SetBool("Idle", false);
-        animator.SetBool("Attack", true);
+        }
+        else if (target.Value.gameObject.layer == 7)
+        {
+            _isNPC = true;
+            isAttacking.Value = true;
+            curState.Value = (int)EyeTypeMonsterState.Attack;
+            //Debug.Log($"MonsterAttack - OnEnter() - curState Attack : {(EyeTypeMonsterState)curState.Value}");
+
+            animator.SetBool("Run", false);
+            animator.SetBool("Walk", false);
+            animator.SetBool("Idle", false);
+            animator.SetBool("Attack", true);
+        }
+
+        
     }
 
     public override NodeResult Execute()
     {
-        stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-
-        if (stateInfo.IsName("Attack") && stateInfo.normalizedTime >= 1.0f)
+        if (_isNPC)
         {
-            //Debug.Log($"attack end");
-            isAttacking.Value = false;
-            return NodeResult.success;
+            stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+
+            if (stateInfo.IsName("Attack") && stateInfo.normalizedTime >= 1.0f)
+            {
+                //Debug.Log($"attack end");
+                isAttacking.Value = false;
+                return NodeResult.success;
+            }
         }
 
         return NodeResult.running;

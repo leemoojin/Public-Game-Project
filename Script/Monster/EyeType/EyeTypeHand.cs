@@ -10,13 +10,14 @@ public class EyeTypeHand : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
 
-        if (other.gameObject.layer == 3)
-        {
-            //game over
-            BB.GetVariable<Variable<bool>>("isWork").Value = false;
-            return;
-        }
-        else if (other.gameObject.layer == 7) 
+        //if (other.gameObject.layer == 3)
+        //{
+        //    //game over
+        //    BB.GetVariable<Variable<bool>>("isWork").Value = false;
+        //    return;
+        //}
+
+        if (other.gameObject.layer == 7) 
         {
             //Debug.Log($"");
             //game over check

@@ -21,9 +21,6 @@ namespace NPC
         [field: SerializeField] public float InteractHoldTime { get; set; } = 0f;
         public NPCInteract NPCInteract;
 
-        [field: Header("State")]
-        public NPCState curState;
-
         // SO
         // Player UI
         public string ObjectName { get; set; }
@@ -39,7 +36,6 @@ namespace NPC
             ObjectName = NPCData.Data.NPCName;
             InteractKey = NPCData.Data.InteractKey;
             InteractType = NPCData.Data.InteractType;
-            curState = NPCState.Idle;
             animator.SetBool("Idle", true);
             self = transform;
 
@@ -51,7 +47,7 @@ namespace NPC
                 BB.GetVariable<Variable<float>>("walkModifier").Value = NPCData.Data.WalkSpeedModifier;
                 BB.GetVariable<Variable<float>>("runModifier").Value = NPCData.Data.RunSpeedModifier;
                 BB.GetVariable<Variable<float>>("crouchModifier").Value = NPCData.Data.CrouchSpeedModifier;
-                BB.GetVariable<Variable<int>>("curState").Value = (int)curState;
+                BB.GetVariable<Variable<int>>("curState").Value = (int)NPCState.Idle;
             }
         }
 
@@ -118,7 +114,7 @@ namespace NPC
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.layer == 8 && curState != NPCState.Dead)
+            if (other.gameObject.layer == 8 && BB.GetVariable<Variable<int>>("curState").Value != (int)NPCState.Dead)
             {
                 NPCDead();
             }
@@ -127,8 +123,7 @@ namespace NPC
         private void NPCDead()
         {
             gameObject.layer = 0;
-            curState = NPCState.Dead;
-            BB.GetVariable<Variable<int>>("curState").Value = (int)curState;
+            BB.GetVariable<Variable<int>>("curState").Value = (int)NPCState.Dead;
             BB.GetVariable<Variable<bool>>("isFollow").Value = false;
             animator.SetBool("@Follow", false);
             animator.SetBool("@Crouch", false);
@@ -136,10 +131,7 @@ namespace NPC
             animator.SetBool("Walk", false);
             animator.SetBool("Run", false);
             animator.SetBool("Dead", true);
-
         }
-
-
     }
 }
 

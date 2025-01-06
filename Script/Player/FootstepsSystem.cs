@@ -4,25 +4,15 @@ using static PlayerEnum;
 
 public class FootstepsSystem : MonoBehaviour
 {
-    [field: SerializeField] public GameObject Unit { get; private set; }
     [field: SerializeField] public Grounds CurGround { get; private set; }
-    public Player Player { get; private set; }
+    [field: SerializeField] public Player Player { get; private set; }
 
     public List<SoundData> stepSoundList;
     public AudioSource stepAS;
 
-    private void Awake()
-    {
-        if (LayerMask.LayerToName(Unit.layer) == "Player")
-        {
-            Player = Unit.GetComponent<Player>();
-        }
-    }
-
-
     private void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if (hit.gameObject.tag == "Untagged") return;
+        if (hit.collider.tag == "Untagged") return;
 
         if (hit.collider.tag == "Concrete") CurGround = Grounds.Concrete;
         if (hit.collider.tag == "Wet") CurGround = Grounds.Wet;
