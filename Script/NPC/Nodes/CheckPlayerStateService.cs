@@ -11,7 +11,7 @@ public class CheckPlayerStateService : Service
 
     public Player player;
     public Animator animator;
-    public CapsuleCollider collider;
+    public CapsuleCollider capsuleCollider;
 
     public override void Task()
     {
@@ -21,8 +21,8 @@ public class CheckPlayerStateService : Service
         {
             isCrouch.Value = true;
             curState.Value = (int)((NPCState)curState.Value | NPCState.Crouch);
-            collider.center = new Vector3(0f, 2.6f, 0f);
-            collider.height = 5.2f;
+            capsuleCollider.center = new Vector3(0f, 0.66f, 0f);
+            capsuleCollider.height = 1.32f;
             animator.SetBool("@Crouch", true);
 
         }
@@ -30,8 +30,8 @@ public class CheckPlayerStateService : Service
         {
             isCrouch.Value = false;
             curState.Value = (int)((NPCState)curState.Value & ~NPCState.Crouch);
-            collider.center = new Vector3(0f, 3.5f, 0f);
-            collider.height = 7f;
+            capsuleCollider.center = new Vector3(0f, 0.91f, 0f);
+            capsuleCollider.height = 1.82f;
             animator.SetBool("@Crouch", false);
         }
     }
