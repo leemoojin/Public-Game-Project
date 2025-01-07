@@ -31,7 +31,7 @@ public class MonsterMovePlayerTarget : MoveToTransform
         }
         else if (monsterType.Value == 2)
         {
-            curState.Value = (int)EarTypeMonsterState.MoveState;
+            curState.Value = (int)EarTypeMonsterState_.MoveState;
             agent.speed = moveSpeed;
         }
         

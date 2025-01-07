@@ -14,12 +14,15 @@ public class DetectNoiseService : Service
     public FloatReference curDetectNoise;// check board
     public TransformReference self;
     public IntReference curState;
+    public FloatReference detectRange;
+    public FloatReference detectNoiseMin;
+    public FloatReference detectNoiseMax;
 
     // SO
-    public LayerMask targetMask = -1;// SO
-    public float detectRange = 60f;// SO
-    public float detectNoiseMax = 9f;// SO
-    public float detectNoiseMin = 3;// SO
+    public LayerMask targetMask = -1;
+    //public float detectRange = 60f;// SO
+    //public float detectNoiseMax = 9f;// SO
+    //public float detectNoiseMin = 3;// SO
 
     public GameObject biggestNoiseObj;// private
     public List<Collider> noiseMakers = new List<Collider>();
@@ -36,7 +39,7 @@ public class DetectNoiseService : Service
         biggestNoiseObj = null;
         curDetectNoise.Value = 0f;
 
-        Collider[] colliders = Physics.OverlapSphere(self.Value.position, detectRange, targetMask);
+        Collider[] colliders = Physics.OverlapSphere(self.Value.position, detectRange.Value, targetMask);
 
         foreach (Collider col in colliders)
         {
@@ -56,18 +59,18 @@ public class DetectNoiseService : Service
 
     private void CheckNoiseAmount(GameObject noiseMaker)
     {       
-        if (Vector3.Distance(self.Value.position, noiseMaker.transform.position) <= detectRange && curDetectNoise.Value >= detectNoiseMax)
+        if (Vector3.Distance(self.Value.position, noiseMaker.transform.position) <= detectRange.Value && curDetectNoise.Value >= detectNoiseMax.Value)
         {
-            if (curState.Value == (int)EarTypeMonsterState.FocusAround) isFocusAround.Value = false;
+            if (curState.Value == (int)EarTypeMonsterState_.FocusAround) isFocusAround.Value = false;
 
             variableToSetBool.Value = true;
             targetPos.Value = biggestNoiseObj.transform.position;
             return;
         }
 
-        if (Vector3.Distance(self.Value.position, noiseMaker.transform.position) <= detectRange * 0.5f && curDetectNoise.Value >= detectNoiseMin)
+        if (Vector3.Distance(self.Value.position, noiseMaker.transform.position) <= detectRange.Value * 0.5f && curDetectNoise.Value >= detectNoiseMin.Value)
         {
-            if (curState.Value == (int)EarTypeMonsterState.FocusAround) isFocusAround.Value = false;
+            if (curState.Value == (int)EarTypeMonsterState_.FocusAround) isFocusAround.Value = false;
 
             variableToSetBool.Value = true;
             targetPos.Value = biggestNoiseObj.transform.position;

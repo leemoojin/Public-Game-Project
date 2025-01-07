@@ -7,7 +7,7 @@ public class CheckMonsterState : Service
 {
 
     public IntReference state;
-    public EarTypeMonsterState curState;
+    public EarTypeMonsterState_ curState;
 
     public override void OnEnter()
     {
@@ -17,6 +17,6 @@ public class CheckMonsterState : Service
 
     public override void Task()
     {
-        curState = (EarTypeMonsterState)state.Value;
+        curState = (EarTypeMonsterState_)state.Value;
     }
 }
