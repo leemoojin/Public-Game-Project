@@ -12,6 +12,7 @@ namespace NPC
         public Blackboard BB;
         public Transform player;
         public Transform self;
+        public UnitSoundSystem soundSystem;
 
         [field: Header("Animations")]
         public Animator animator;
@@ -49,6 +50,8 @@ namespace NPC
                 BB.GetVariable<Variable<float>>("crouchModifier").Value = NPCData.Data.CrouchSpeedModifier;
                 BB.GetVariable<Variable<int>>("curState").Value = (int)NPCState.Idle;
             }
+
+            //soundSystem.PlaySoundTemp();
         }
 
         private void Update()
@@ -131,6 +134,8 @@ namespace NPC
             animator.SetBool("Walk", false);
             animator.SetBool("Run", false);
             animator.SetBool("Dead", true);
+            soundSystem.StopStepAudio();
+            soundSystem.OtherSoundPlay("Scream");
         }
     }
 }

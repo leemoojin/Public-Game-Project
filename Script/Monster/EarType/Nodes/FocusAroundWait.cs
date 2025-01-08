@@ -5,15 +5,27 @@ using UnityEngine;
 [MBTNode("Example/Focus Around Wait")]
 public class FocusAroundWait : Wait
 {
+    public IntReference curState;
     public IntReference state;
     public BoolReference variableToSkip;// isFocusAround
     public BoolReference isDetect;
 
+    public Animator animator;
+
     public override void OnEnter()
     {
         Debug.Log("FocusAroundWait - OnEnter()");
-        variableToSkip.Value = true;
-        state.Value = (int)EarTypeMonsterState_.FocusAround;
+        if (!variableToSkip.Value) 
+        {
+            curState.Value = (int)EarTypeMonsterState.Focus;
+            variableToSkip.Value = true;
+            animator.SetBool("Idle", false);
+            animator.SetBool("Walk", false);
+            animator.SetBool("Run", false);
+            animator.SetBool("Focus", true);
+            animator.SetBool("Attack", false);
+        }
+
         base.OnEnter();
     }
 

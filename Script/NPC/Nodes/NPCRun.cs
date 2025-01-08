@@ -7,12 +7,20 @@ using UnityEngine;
 public class NPCRun : NPCMoveToTransform
 {
     public Animator animator;
+    public UnitSoundSystem soundSystem;
 
 
     public override void OnEnter()
     {
-        if (animator.GetBool("Run")) return;
+        //if (animator.GetBool("Run")) return;
         base.OnEnter();
+
+        if (curState.Value != (int)NPCState.Run)
+        {
+            curState.Value = (int)NPCState.Run;
+            soundSystem.StopStepAudio();
+        }         
+        soundSystem.PlayStepSound((NPCState)curState.Value);
         animator.SetBool("@Crouch", false);
         animator.SetBool("Idle", false);
         animator.SetBool("Walk", false);
@@ -24,6 +32,11 @@ public class NPCRun : NPCMoveToTransform
         if (distanceToplayer.Value < distance.Value)
         {
             return NodeResult.success;
+        }
+
+        if (soundSystem.GroundChange)
+        {
+            soundSystem.PlayStepSound((NPCState)curState.Value);
         }
 
         return base.Execute();

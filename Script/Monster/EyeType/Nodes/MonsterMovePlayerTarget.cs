@@ -29,11 +29,11 @@ public class MonsterMovePlayerTarget : MoveToTransform
             animator.SetBool("Idle", false);
             animator.SetBool("Attack", false);
         }
-        else if (monsterType.Value == 2)
-        {
-            curState.Value = (int)EarTypeMonsterState_.MoveState;
-            agent.speed = moveSpeed;
-        }
+        //else if (monsterType.Value == 2)
+        //{
+        //    curState.Value = (int)EarTypeMonsterState_.MoveState;
+        //    agent.speed = moveSpeed;
+        //}
         
         base.OnEnter();
     }

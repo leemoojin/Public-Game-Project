@@ -7,16 +7,19 @@ public class EarTypeMonsterAttack : Leaf
 {
     public IntReference curState;
 
+    public Animator animator;
 
     public override void OnEnter()
     {
         //Debug.Log("EarTypeMonsterAttack - OnEnter()");
         base.OnEnter();
 
-        //animator.SetBool("Run", false);
-        //animator.SetBool("Walk", false);
-        //animator.SetBool("Idle", false);
-        //animator.SetBool("Attack", true);
+        curState.Value = (int)EarTypeMonsterState.Attack;
+        animator.SetBool("Idle", false);
+        animator.SetBool("Walk", false);
+        animator.SetBool("Run", false);
+        animator.SetBool("Focus", false);
+        animator.SetBool("Attack", true);
     }
 
     public override NodeResult Execute()

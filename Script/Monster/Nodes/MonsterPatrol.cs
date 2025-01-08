@@ -9,7 +9,8 @@ public class MonsterPatrol : MoveToVector
     public FloatReference baseSpeed;
     public FloatReference walkSpeedModifier;
     public IntReference curState;
-    
+    public IntReference monsterType;
+
     public Animator animator;
     //public float moveSpeed = 5f;
 
@@ -19,13 +20,26 @@ public class MonsterPatrol : MoveToVector
 
         //state.Value = (int)MonsterState.PatrolState;
         agent.speed = baseSpeed.Value * walkSpeedModifier.Value;
-        curState.Value = (int)EyeTypeMonsterState.Walk;
-        //Debug.Log($"MonsterPatrol - OnEnter() - curState walk : {(EyeTypeMonsterState)curState.Value}");
 
-        animator.SetBool("Idle", false);
-        animator.SetBool("Run", false);
-        animator.SetBool("Attack", false);
-        animator.SetBool("Walk", true);
+        if (monsterType.Value == 1)
+        {
+            curState.Value = (int)EyeTypeMonsterState.Walk;
+            //Debug.Log($"MonsterPatrol - OnEnter() - curState walk : {(EyeTypeMonsterState)curState.Value}");
+
+            animator.SetBool("Idle", false);
+            animator.SetBool("Run", false);
+            animator.SetBool("Attack", false);
+            animator.SetBool("Walk", true);
+        }
+        else if (monsterType.Value == 2)
+        {
+            curState.Value = (int)EarTypeMonsterState.Walk;
+            animator.SetBool("Idle", false);
+            animator.SetBool("Walk", true);
+            animator.SetBool("Run", false);
+            animator.SetBool("Focus", false);
+            animator.SetBool("Attack", false);
+        }
 
         base.OnEnter();
     }

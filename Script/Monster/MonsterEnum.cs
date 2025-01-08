@@ -15,7 +15,8 @@ public enum EarTypeMonsterState
     Move = 1 << 1,
     Walk = 1 << 2,
     Run = 1 << 3,
-    Attack = 1 << 4
+    Attack = 1 << 4,
+    Focus = 1 << 5,
 }
 
 [Flags]

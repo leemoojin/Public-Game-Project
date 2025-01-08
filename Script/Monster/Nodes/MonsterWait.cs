@@ -28,9 +28,14 @@ public class MonsterWait : Wait
         }
         else if (monsterType.Value == 2)
         {
-        
+            curState.Value = (int)EarTypeMonsterState.Idle;
+            animator.SetBool("Idle", true);
+            animator.SetBool("Walk", false);
+            animator.SetBool("Run", false);
+            animator.SetBool("Focus", false);
+            animator.SetBool("Attack", false);
         }
-        
+
     }
 
     public override NodeResult Execute()

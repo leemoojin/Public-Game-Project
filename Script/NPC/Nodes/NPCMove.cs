@@ -6,16 +6,27 @@ using UnityEngine;
 [MBTNode("Example/NPC Move")]
 public class NPCMove : NPCMoveToTransform
 {
+
+
     public Animator animator;
+    public UnitSoundSystem soundSystem;
+
 
     public override void OnEnter()
-    {
-        if (animator.GetBool("Walk")) return;
+    {        
         base.OnEnter();
-
+        if (((NPCState)curState.Value & NPCState.Move) != NPCState.Move) curState.Value = (int)((NPCState)curState.Value | NPCState.Move);
+        if (((NPCState)curState.Value & NPCState.Run) == NPCState.Run)
+        {
+            curState.Value = (int)((NPCState)curState.Value & ~NPCState.Run);
+            soundSystem.StopStepAudio();
+        }
+        //Debug.Log($"NPCMove - OnEnter() - {(NPCState)curState.Value}");
+        //if (animator.GetBool("Walk")) return;        
+        soundSystem.PlayStepSound((NPCState)curState.Value);
         animator.SetBool("Idle", false);
         animator.SetBool("Run", false);
-        animator.SetBool("Walk", true);
+        animator.SetBool("Walk", true);        
     }
 
     public override NodeResult Execute()
@@ -23,6 +34,11 @@ public class NPCMove : NPCMoveToTransform
         if (distanceToplayer.Value > distance.Value)
         {
             return NodeResult.success;
+        }
+
+        if (soundSystem.GroundChange)
+        {
+            soundSystem.PlayStepSound((NPCState)curState.Value);
         }
 
         //if (_player.CurState == PlayerEnum.PlayerState.CrouchState)

@@ -7,9 +7,6 @@ public class EarTypeMonster : MonoBehaviour
     [field: SerializeField] public MonsterDataSO MonsterData { get; private set; }
     public Blackboard BB;
 
-    [field: Header("State")]
-    public EyeTypeMonsterState curState;
-
     [field: Header("Animations")]
     public Animator animator;
 
@@ -26,7 +23,6 @@ public class EarTypeMonster : MonoBehaviour
             BB.GetVariable<Variable<float>>("walkSpeedModifier").Value = MonsterData.EarType.WalkSpeedModifier;
             BB.GetVariable<Variable<float>>("runSpeedModifier").Value = MonsterData.EarType.RunSpeedModifier;
             BB.GetVariable<Variable<float>>("attackRange").Value = MonsterData.EarType.AttackRange;
-
             BB.GetVariable<Variable<bool>>("isWork").Value = isWork;
             BB.GetVariable<Variable<int>>("curState").Value = (int)EarTypeMonsterState.Idle;
         }
