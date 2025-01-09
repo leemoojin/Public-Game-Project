@@ -38,7 +38,7 @@ public class MonsterPatrol : MoveToVector
             animator.SetBool("Walk", true);
             animator.SetBool("Run", false);
             animator.SetBool("Focus", false);
-            animator.SetBool("Attack", false);
+            //animator.SetBool("Attack", false);
         }
 
         base.OnEnter();

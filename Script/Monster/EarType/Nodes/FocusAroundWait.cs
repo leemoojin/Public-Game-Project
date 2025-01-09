@@ -23,7 +23,7 @@ public class FocusAroundWait : Wait
             animator.SetBool("Walk", false);
             animator.SetBool("Run", false);
             animator.SetBool("Focus", true);
-            animator.SetBool("Attack", false);
+            //animator.SetBool("Attack", false);
         }
 
         base.OnEnter();

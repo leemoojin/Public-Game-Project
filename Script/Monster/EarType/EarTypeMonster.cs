@@ -19,6 +19,7 @@ public class EarTypeMonster : MonoBehaviour
         {
             BB.GetVariable<Variable<float>>("detectRange").Value = MonsterData.EarType.DetectRange;
             BB.GetVariable<Variable<float>>("detectNoiseMin").Value = MonsterData.EarType.DetectNoiseMin;
+            BB.GetVariable<Variable<float>>("detectNoiseMax").Value = MonsterData.EarType.DetectNoiseMax;
             BB.GetVariable<Variable<float>>("baseSpeed").Value = MonsterData.EarType.BaseSpeed;
             BB.GetVariable<Variable<float>>("walkSpeedModifier").Value = MonsterData.EarType.WalkSpeedModifier;
             BB.GetVariable<Variable<float>>("runSpeedModifier").Value = MonsterData.EarType.RunSpeedModifier;

@@ -20,7 +20,7 @@ public class MonsterMoveNoiseTarget : MoveToVector
         animator.SetBool("Walk", false);
         animator.SetBool("Run", true);
         animator.SetBool("Focus", false);
-        animator.SetBool("Attack", false);
+        //animator.SetBool("Attack", false);
 
         base.OnEnter();
     }

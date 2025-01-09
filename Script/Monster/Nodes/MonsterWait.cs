@@ -33,7 +33,7 @@ public class MonsterWait : Wait
             animator.SetBool("Walk", false);
             animator.SetBool("Run", false);
             animator.SetBool("Focus", false);
-            animator.SetBool("Attack", false);
+            //animator.SetBool("Attack", false);
         }
 
     }

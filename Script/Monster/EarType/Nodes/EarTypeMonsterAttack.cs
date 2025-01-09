@@ -6,24 +6,25 @@ using UnityEngine;
 public class EarTypeMonsterAttack : Leaf
 {
     public IntReference curState;
+    public BoolReference isWork;
 
     public Animator animator;
 
     public override void OnEnter()
     {
-        //Debug.Log("EarTypeMonsterAttack - OnEnter()");
         base.OnEnter();
-
+        Debug.Log("EarTypeMonsterAttack - OnEnter() - 플레이어 사망");
         curState.Value = (int)EarTypeMonsterState.Attack;
-        animator.SetBool("Idle", false);
+        animator.SetBool("Idle", true);
         animator.SetBool("Walk", false);
         animator.SetBool("Run", false);
         animator.SetBool("Focus", false);
-        animator.SetBool("Attack", true);
+        //animator.SetBool("Attack", false);
+        isWork.Value = false;
     }
 
     public override NodeResult Execute()
     {
-        throw new System.NotImplementedException();
+        return NodeResult.success;
     }
 }
