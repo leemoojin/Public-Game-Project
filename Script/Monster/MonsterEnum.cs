@@ -35,3 +35,12 @@ public enum MonsterType
     EyeType = 1,
     EarType = 2
 }
+
+[Flags]
+public enum MonsterSetting
+{
+    IsWork = 1 << 0,
+    CanPatrol = 1 << 1,
+    HaveSection = 1 << 2,
+    HaveDestination = 1 << 3,
+}

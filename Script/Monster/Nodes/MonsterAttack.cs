@@ -6,6 +6,7 @@ using UnityEngine;
 public class MonsterAttack : Leaf
 {
     public BoolReference isAttacking;
+    public BoolReference isDetect;
     public IntReference curState;
     public TransformReference target;
 
@@ -17,8 +18,9 @@ public class MonsterAttack : Leaf
 
     public override void OnEnter()
     {        
-        //Debug.Log("MonsterAttack - OnEnter()");
+        Debug.Log($"MonsterAttack - OnEnter() - target : {target.Value}");
         base.OnEnter();
+
 
         if (target.Value.gameObject.layer == 3)
         {
@@ -37,15 +39,13 @@ public class MonsterAttack : Leaf
             _isNPC = true;
             isAttacking.Value = true;
             curState.Value = (int)EyeTypeMonsterState.Attack;
-            //Debug.Log($"MonsterAttack - OnEnter() - curState Attack : {(EyeTypeMonsterState)curState.Value}");
+            Debug.Log($"MonsterAttack - OnEnter() - curState Attack : {(EyeTypeMonsterState)curState.Value}");
 
             animator.SetBool("Run", false);
             animator.SetBool("Walk", false);
             animator.SetBool("Idle", false);
             animator.SetBool("Attack", true);
-        }
-
-        
+        } 
     }
 
     public override NodeResult Execute()
@@ -53,15 +53,32 @@ public class MonsterAttack : Leaf
         if (_isNPC)
         {
             stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            //Debug.Log($"{stateInfo.IsName("Attack")}, {stateInfo.normalizedTime}");
 
-            if (stateInfo.IsName("Attack") && stateInfo.normalizedTime >= 1.0f)
+
+            if (stateInfo.IsName("Attack") && stateInfo.normalizedTime >= 1f)
             {
-                //Debug.Log($"attack end");
+                Debug.Log($"attack end");
                 isAttacking.Value = false;
                 return NodeResult.success;
             }
         }
+        else 
+        {
+            Debug.Log($"not npc");
+
+        }
 
         return NodeResult.running;
+    }
+
+    public override void OnExit()
+    {
+        base.OnExit();
+
+        Debug.Log($"MonsterAttack - OnExit()");
+        isAttacking.Value = false;
+        isDetect.Value = false;
+        target.Value = null;
     }
 }
