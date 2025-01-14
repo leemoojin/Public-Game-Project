@@ -21,7 +21,7 @@ public class MonsterMovePlayerTarget : MoveToTransform
         {
             curState.Value = (int)EyeTypeMonsterState.Run;
             agent.speed = baseSpeed.Value * runSpeedModifier.Value;
-            Debug.Log($"MonsterMovePlayerTarget - OnEnter() - curState run : {(EyeTypeMonsterState)curState.Value}");
+            //Debug.Log($"MonsterMovePlayerTarget - OnEnter() - curState run : {(EyeTypeMonsterState)curState.Value}");
 
             animator.SetBool("Run", true);
             animator.SetBool("Walk", false);

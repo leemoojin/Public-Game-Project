@@ -18,7 +18,7 @@ public class MonsterAttack : Leaf
 
     public override void OnEnter()
     {        
-        Debug.Log($"MonsterAttack - OnEnter() - target : {target.Value}");
+        //Debug.Log($"MonsterAttack - OnEnter() - target : {target.Value}");
         base.OnEnter();
 
 
@@ -39,7 +39,7 @@ public class MonsterAttack : Leaf
             _isNPC = true;
             isAttacking.Value = true;
             curState.Value = (int)EyeTypeMonsterState.Attack;
-            Debug.Log($"MonsterAttack - OnEnter() - curState Attack : {(EyeTypeMonsterState)curState.Value}");
+            //Debug.Log($"MonsterAttack - OnEnter() - curState Attack : {(EyeTypeMonsterState)curState.Value}");
 
             animator.SetBool("Run", false);
             animator.SetBool("Walk", false);
@@ -55,18 +55,12 @@ public class MonsterAttack : Leaf
             stateInfo = animator.GetCurrentAnimatorStateInfo(0);
             //Debug.Log($"{stateInfo.IsName("Attack")}, {stateInfo.normalizedTime}");
 
-
             if (stateInfo.IsName("Attack") && stateInfo.normalizedTime >= 1f)
             {
-                Debug.Log($"attack end");
+                //Debug.Log($"attack end");
                 isAttacking.Value = false;
                 return NodeResult.success;
             }
-        }
-        else 
-        {
-            Debug.Log($"not npc");
-
         }
 
         return NodeResult.running;
@@ -76,7 +70,7 @@ public class MonsterAttack : Leaf
     {
         base.OnExit();
 
-        Debug.Log($"MonsterAttack - OnExit()");
+        //Debug.Log($"MonsterAttack - OnExit()");
         isAttacking.Value = false;
         isDetect.Value = false;
         target.Value = null;

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace NPC
 {
-    public class NPC : MonoBehaviour, IInteractable
+    public class NPC : MonoBehaviour, IInteractable, IAttackable
     {
         [field: Header("References")]
         [field: SerializeField] public NPCDataSO NPCData { get; private set; }
@@ -20,7 +20,9 @@ namespace NPC
         [field: Header("Interactable")]
         [field: SerializeField] public bool IsInteractable { get; set; }
         [field: SerializeField] public float InteractHoldTime { get; set; } = 0f;
-        public NPCInteract NPCInteract;
+        
+        [field: Header("Setting")]
+        public NPCSetting npcSetting;
 
         // SO
         // Player UI
@@ -67,19 +69,19 @@ namespace NPC
             _hasReachedPlayer = false;
             _lookAtPlayer = true;
 
-            if ((NPCInteract & NPCInteract.CanRepeat) != NPCInteract.CanRepeat) IsInteractable = false;
+            if ((npcSetting & NPCSetting.CanRepeat) != NPCSetting.CanRepeat) IsInteractable = false;
 
-            if ((NPCInteract & NPCInteract.CanTalk) == NPCInteract.CanTalk)
+            if ((npcSetting & NPCSetting.CanTalk) == NPCSetting.CanTalk)
             {
                 // NPC dialog
             }
 
-            if ((NPCInteract & NPCInteract.HaveDestination) == NPCInteract.HaveDestination)
+            if ((npcSetting & NPCSetting.HaveDestination) == NPCSetting.HaveDestination)
             {
                 
             }
 
-            if ((NPCInteract & NPCInteract.CanFollow) == NPCInteract.CanFollow && !BB.GetVariable<Variable<bool>>("isFollow").Value)
+            if ((npcSetting & NPCSetting.CanFollow) == NPCSetting.CanFollow && !BB.GetVariable<Variable<bool>>("isFollow").Value)
             {
                 animator.SetBool("Idle", false);
                 animator.SetBool("@Follow", true);
@@ -113,15 +115,13 @@ namespace NPC
             }
         }
 
-        
-
-        private void OnTriggerEnter(Collider other)
-        {
-            if (other.gameObject.layer == 8 && BB.GetVariable<Variable<int>>("curState").Value != (int)NPCState.Dead)
-            {
-                NPCDead();
-            }
-        }
+        //private void OnTriggerEnter(Collider other)
+        //{
+        //    if (other.gameObject.layer == 8 && BB.GetVariable<Variable<int>>("curState").Value != (int)NPCState.Dead)
+        //    {
+        //        NPCDead();
+        //    }
+        //}
 
         private void NPCDead()
         {
@@ -136,6 +136,14 @@ namespace NPC
             animator.SetBool("Dead", true);
             soundSystem.StopStepAudio();
             soundSystem.OtherSoundPlay("Scream");
+        }
+
+        public void OnHitSuccess()
+        {
+            if (BB.GetVariable<Variable<int>>("curState").Value != (int)NPCState.Dead)
+            {
+                NPCDead();
+            }
         }
     }
 }

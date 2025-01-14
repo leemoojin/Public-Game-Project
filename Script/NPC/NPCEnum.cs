@@ -15,7 +15,7 @@ namespace NPC
     }
 
     [Flags]
-    public enum NPCInteract
+    public enum NPCSetting
     {
         CanTalk = 1 << 0,
         CanFollow = 1 << 1,

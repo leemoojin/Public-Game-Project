@@ -56,21 +56,8 @@ public class EyeTypeMonster : MonoBehaviour
 
     }
 
-    private void Update()
+    public void MonsterWork()
     {
-
-        //AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        //Debug.Log($"{stateInfo.IsName("Attack")}, {stateInfo.normalizedTime}");
-
-        //if (_isArrival || agent.hasPath || agent.pathPending) return;
-        //if (agent.remainingDistance < 0.5f)
-        //{
-        //    Debug.Log($"¸ñÀûÁö µµÂø");
-        //    _isArrival = true;
-        //    BB.GetVariable<Variable<bool>>("isWork").Value = isWork;
-        //    BB.GetVariable<Variable<int>>("curState").Value = (int)EyeTypeMonsterState.Idle;
-        //    animator.SetBool("Run", false);
-        //    animator.SetBool("Idle", true);
-        //}
+        BB.GetVariable<Variable<bool>>("isWork").Value = true;
     }
 }

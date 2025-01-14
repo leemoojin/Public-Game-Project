@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Player : MonoBehaviour, INoise
+public class Player : MonoBehaviour, INoise, IAttackable
 {
     [field: Header("References")]
     [field: SerializeField] public PlayerDataSO Data { get; private set; }
@@ -74,4 +74,10 @@ public class Player : MonoBehaviour, INoise
     }
 
     public PlayerStateMachine GetStateMachine() { return _stateMachine; }
+
+    public void OnHitSuccess()
+    {
+        // gameover
+        Debug.Log($"gameover");
+    }
 }
