@@ -6,7 +6,7 @@ using UnityEngine;
 [MBTNode("Example/NPC Move")]
 public class NPCMove : NPCMoveToTransform
 {
-
+    public BoolReference isSkipValue;
 
     public Animator animator;
     public UnitSoundSystem soundSystem;
@@ -31,6 +31,8 @@ public class NPCMove : NPCMoveToTransform
 
     public override NodeResult Execute()
     {
+        if (!isSkipValue.Value) return NodeResult.success;
+
         if (distanceToplayer.Value > distance.Value)
         {
             return NodeResult.success;

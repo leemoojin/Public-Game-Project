@@ -6,6 +6,8 @@ using UnityEngine;
 [MBTNode("Example/NPC Run")]
 public class NPCRun : NPCMoveToTransform
 {
+    public BoolReference isSkipValue;
+
     public Animator animator;
     public UnitSoundSystem soundSystem;
 
@@ -29,6 +31,8 @@ public class NPCRun : NPCMoveToTransform
 
     public override NodeResult Execute()
     {
+        if (!isSkipValue.Value) return NodeResult.success;
+
         if (distanceToplayer.Value < distance.Value)
         {
             return NodeResult.success;

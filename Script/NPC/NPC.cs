@@ -2,17 +2,19 @@
 using System;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace NPC
 {
     public class NPC : MonoBehaviour, IInteractable, IAttackable
     {
         [field: Header("References")]
-        [field: SerializeField] public NPCDataSO NPCData { get; private set; }
-        public Blackboard BB;
+        [field: SerializeField] public NPCDataSO NpcData { get; private set; }
+        public Blackboard bb;
         public Transform player;
-        public Transform self;
         public UnitSoundSystem soundSystem;
+        public NavMeshAgent agent;
+        public CapsuleCollider capsuleCollider;
 
         [field: Header("Animations")]
         public Animator animator;
@@ -24,33 +26,32 @@ namespace NPC
         [field: Header("Setting")]
         public NPCSetting npcSetting;
 
-        // SO
-        // Player UI
         public string ObjectName { get; set; }
         public string InteractKey { get; set; }
         public string InteractType { get; set; }
 
+        private Transform _self;
         private bool _hasReachedPlayer = false;
         private bool _lookAtPlayer = false;
         
 
         private void Start()
         {
-            ObjectName = NPCData.Data.NPCName;
-            InteractKey = NPCData.Data.InteractKey;
-            InteractType = NPCData.Data.InteractType;
+            ObjectName = NpcData.Data.NPCName;
+            InteractKey = NpcData.Data.InteractKey;
+            InteractType = NpcData.Data.InteractType;
             animator.SetBool("Idle", true);
-            self = transform;
+            _self = transform;
 
-            if (BB != null)
+            if (bb != null)
             {
-                BB.GetVariable<Variable<float>>("nearDistance").Value = NPCData.Data.NearDistance;
-                BB.GetVariable<Variable<float>>("farDistance").Value = NPCData.Data.FarDistance;
-                BB.GetVariable<Variable<float>>("baseSpeed").Value = NPCData.Data.BaseSpeed;
-                BB.GetVariable<Variable<float>>("walkModifier").Value = NPCData.Data.WalkSpeedModifier;
-                BB.GetVariable<Variable<float>>("runModifier").Value = NPCData.Data.RunSpeedModifier;
-                BB.GetVariable<Variable<float>>("crouchModifier").Value = NPCData.Data.CrouchSpeedModifier;
-                BB.GetVariable<Variable<int>>("curState").Value = (int)NPCState.Idle;
+                bb.GetVariable<Variable<float>>("nearDistance").Value = NpcData.Data.NearDistance;
+                bb.GetVariable<Variable<float>>("farDistance").Value = NpcData.Data.FarDistance;
+                bb.GetVariable<Variable<float>>("baseSpeed").Value = NpcData.Data.BaseSpeed;
+                bb.GetVariable<Variable<float>>("walkModifier").Value = NpcData.Data.WalkSpeedModifier;
+                bb.GetVariable<Variable<float>>("runModifier").Value = NpcData.Data.RunSpeedModifier;
+                bb.GetVariable<Variable<float>>("crouchModifier").Value = NpcData.Data.CrouchSpeedModifier;
+                bb.GetVariable<Variable<int>>("curState").Value = (int)NPCState.Idle;
             }
 
             //soundSystem.PlaySoundTemp();
@@ -78,21 +79,21 @@ namespace NPC
 
             if ((npcSetting & NPCSetting.HaveDestination) == NPCSetting.HaveDestination)
             {
-                
+                // move
             }
 
-            if ((npcSetting & NPCSetting.CanFollow) == NPCSetting.CanFollow && !BB.GetVariable<Variable<bool>>("isFollow").Value)
+            if ((npcSetting & NPCSetting.CanFollow) == NPCSetting.CanFollow && !bb.GetVariable<Variable<bool>>("isFollow").Value)
             {
                 animator.SetBool("Idle", false);
                 animator.SetBool("@Follow", true);
               
-                BB.GetVariable<Variable<bool>>("isFollow").Value = true;
+                bb.GetVariable<Variable<bool>>("isFollow").Value = true;
             }
         }
 
         private void LookAtPlayer()
         {     
-            Vector3 direction = player.position - self.position;
+            Vector3 direction = player.position - _self.position;
 
             direction.y = 0;
 
@@ -100,13 +101,13 @@ namespace NPC
             {
                 Quaternion targetRotation = Quaternion.LookRotation(direction);
 
-                self.rotation = Quaternion.Lerp(
-                    self.rotation,
+                _self.rotation = Quaternion.Lerp(
+                    _self.rotation,
                     targetRotation,
                     Time.deltaTime * 2f
                 );
 
-                float angleDifference = Quaternion.Angle(self.rotation, targetRotation);
+                float angleDifference = Quaternion.Angle(_self.rotation, targetRotation);
                 if (angleDifference <= 0.2f)
                 {
                     _hasReachedPlayer = true;
@@ -126,8 +127,9 @@ namespace NPC
         private void NPCDead()
         {
             gameObject.layer = 0;
-            BB.GetVariable<Variable<int>>("curState").Value = (int)NPCState.Dead;
-            BB.GetVariable<Variable<bool>>("isFollow").Value = false;
+            capsuleCollider.enabled = false;
+            bb.GetVariable<Variable<int>>("curState").Value = (int)NPCState.Dead;
+            bb.GetVariable<Variable<bool>>("isFollow").Value = false;
             animator.SetBool("@Follow", false);
             animator.SetBool("@Crouch", false);
             animator.SetBool("Idle", false);
@@ -140,10 +142,22 @@ namespace NPC
 
         public void OnHitSuccess()
         {
-            if (BB.GetVariable<Variable<int>>("curState").Value != (int)NPCState.Dead)
+            if (bb.GetVariable<Variable<int>>("curState").Value != (int)NPCState.Dead)
             {
                 NPCDead();
             }
+        }
+
+        public void NpcStop()
+        {
+            bb.GetVariable<Variable<bool>>("isFollow").Value = false;
+            agent.isStopped = true;
+            animator.SetBool("@Follow", false);
+            animator.SetBool("@Crouch", false);
+            animator.SetBool("Idle", true);
+            animator.SetBool("Walk", false);
+            animator.SetBool("Run", false);
+            animator.SetBool("Dead", false);
         }
     }
 }
