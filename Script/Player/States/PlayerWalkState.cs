@@ -12,7 +12,8 @@ public class PlayerWalkState : PlayerGroundState
         base.Enter();
         //Debug.Log("PlayerWalkState - Enter()");
         stateMachine.Player.CurState = PlayerEnum.PlayerState.WalkState;
-        stateMachine.MovementSpeedModifier = 1;
+        //stateMachine.MovementSpeedModifier = 1;
+        stateMachine.MovementSpeedModifier = stateMachine.Player.Data.GroundData.WalkSpeedModifier;
         stateMachine.Player.SumNoiseAmount = 6f;
     }
 

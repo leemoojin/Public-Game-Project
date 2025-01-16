@@ -8,46 +8,44 @@ public class PlayerLookController : MonoBehaviour
     [field: SerializeField] public NoiseSettings WalkHeadMove { get; private set; }
     [field: SerializeField] public NoiseSettings CrouchHeadMove { get; private set; }
 
+    [field: Header("References")]
+    [field: SerializeField] public Player Player { get; private set; }
+    [field: SerializeField] private Transform playerTransform;
     public CinemachineVirtualCamera playerVC;
+
     private CinemachinePOV _pov;
-    private CinemachineBasicMultiChannelPerlin noise;
-    private Player player;
-    private PlayerStateMachine stateMachine;
-
-
-    [SerializeField] private Transform playerTransform;
+    private CinemachineBasicMultiChannelPerlin _noise;
+    private PlayerStateMachine _stateMachine;
 
     private void Awake()
     {
-        player = playerTransform.GetComponent<Player>();        
         _pov = playerVC.GetCinemachineComponent<CinemachinePOV>();
-        noise = playerVC.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
-
+        _noise = playerVC.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
     }
 
     private void Start()
     {
-        stateMachine = player.GetStateMachine();
+        _stateMachine = Player.GetStateMachine();
     }
 
     private void LateUpdate()
     {
         playerTransform.rotation = Quaternion.Euler(0, _pov.m_HorizontalAxis.Value, 0);
 
-        if (player.CurState == PlayerEnum.PlayerState.RunState)
+        if (Player.CurState == PlayerEnum.PlayerState.RunState)
         {
-            noise.m_NoiseProfile = RunHeadMove;
+            _noise.m_NoiseProfile = RunHeadMove;
         }
-        else if (player.CurState == PlayerEnum.PlayerState.WalkState)
+        else if (Player.CurState == PlayerEnum.PlayerState.WalkState)
         {
-            noise.m_NoiseProfile = WalkHeadMove;
+            _noise.m_NoiseProfile = WalkHeadMove;
         }
-        else if (player.CurState == PlayerEnum.PlayerState.CrouchState)
+        else if (Player.CurState == PlayerEnum.PlayerState.CrouchState)
         {
-            noise.m_NoiseProfile = CrouchHeadMove;
+            _noise.m_NoiseProfile = CrouchHeadMove;
         }
 
-        if(stateMachine.IsMoving) noise.m_AmplitudeGain = 1;
-        else noise.m_AmplitudeGain = 0;
+        if(_stateMachine.IsMoving) _noise.m_AmplitudeGain = 1;
+        else _noise.m_AmplitudeGain = 0;
     }
 }

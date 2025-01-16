@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,7 +9,6 @@ public class PlayerBaseState : IState
     public PlayerBaseState(PlayerStateMachine stateMachine)
     {
         //Debug.Log("PlayerBaseState 생성자");
-
         this.stateMachine = stateMachine;
         groundData = stateMachine.Player.Data.GroundData;
     }
@@ -18,7 +16,6 @@ public class PlayerBaseState : IState
     public virtual void Enter()
     {
         //Debug.Log("PlayerBaseState - Enter()");
-
         AddInputActionsCallbacks();
     }
 
@@ -39,6 +36,7 @@ public class PlayerBaseState : IState
         //Debug.Log($"상호작용 s");
         stateMachine.Player.PlayerInteractable.OnInteracted();
     }
+
     protected virtual void OnInteractionCanceled(InputAction.CallbackContext context)
     {
         //Debug.Log($"상호작용 c");
@@ -50,11 +48,13 @@ public class PlayerBaseState : IState
         //Debug.Log($"이동 s");
         stateMachine.IsMoving = true;
     }
+
     protected virtual void OnMovementCanceled(InputAction.CallbackContext context)
     {
         //Debug.Log($"이동 c");
         stateMachine.IsMoving = false;
     }
+
     protected virtual void OnRunStarted(InputAction.CallbackContext context)
     {
         //Debug.Log($"달리기 s");
@@ -65,23 +65,22 @@ public class PlayerBaseState : IState
     {
         //Debug.Log($"달리기 c");
     }
+
     protected virtual void OnCrouchStarted(InputAction.CallbackContext context)
     {
         //Debug.Log($"앉기 s");
         stateMachine.PressCrouchBtn = true;
-
     }
+
     protected virtual void OnCrouchCanceled(InputAction.CallbackContext context)
     {
         //Debug.Log($"앉기 c");
         stateMachine.PressCrouchBtn = false;
-
     }
 
     public virtual void Exit()
     {
         //Debug.Log("PlayerBaseState - Exit()");
-
         RemoveInputActionsCallbacks();
     }
 
@@ -146,7 +145,4 @@ public class PlayerBaseState : IState
         float movementSpeed = stateMachine.MovementSpeed * stateMachine.MovementSpeedModifier;
         return movementSpeed;
     }
-
-   
-
 }
