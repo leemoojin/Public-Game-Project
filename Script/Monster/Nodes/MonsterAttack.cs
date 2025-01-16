@@ -18,9 +18,8 @@ public class MonsterAttack : Leaf
 
     public override void OnEnter()
     {        
-        //Debug.Log($"MonsterAttack - OnEnter() - target : {target.Value}");
+        //Debug.Log($"MonsterAttack - OnEnter() - target : {target.Value}, layer : {target.Value.gameObject.layer}");
         base.OnEnter();
-
 
         if (target.Value.gameObject.layer == 3)
         {
@@ -36,6 +35,7 @@ public class MonsterAttack : Leaf
         }
         else if (target.Value.gameObject.layer == 7)
         {
+            target.Value.gameObject.GetComponent<NPC.NPC>().NpcStop();
             _isNPC = true;
             isAttacking.Value = true;
             curState.Value = (int)EyeTypeMonsterState.Attack;
@@ -50,14 +50,16 @@ public class MonsterAttack : Leaf
 
     public override NodeResult Execute()
     {
+        if (target.Value.gameObject.layer == 0) return NodeResult.success;
+
         if (_isNPC)
         {
             stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-            //Debug.Log($"{stateInfo.IsName("Attack")}, {stateInfo.normalizedTime}");
+            //Debug.Log($"MonsterAttack - Execute() - {stateInfo.IsName("Attack")}, {stateInfo.normalizedTime}");
 
             if (stateInfo.IsName("Attack") && stateInfo.normalizedTime >= 1f)
             {
-                //Debug.Log($"attack end");
+                Debug.Log($"MonsterAttack - Execute() - attack end");
                 isAttacking.Value = false;
                 return NodeResult.success;
             }

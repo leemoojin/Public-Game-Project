@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class EyeTypeAttackSystem : MonoBehaviour
 {
-    public Blackboard BB;
+    public Blackboard bb;
     public IAttackable cachedPlayer;
     public IAttackable cachedNPC;
 
@@ -11,7 +11,7 @@ public class EyeTypeAttackSystem : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (BB.GetVariable<Variable<int>>("curState").Value != (int)EyeTypeMonsterState.Attack) return;
+        if (bb.GetVariable<Variable<int>>("curState").Value != (int)EyeTypeMonsterState.Attack) return;
 
         if (other.gameObject.layer == 7) 
         {
@@ -26,14 +26,14 @@ public class EyeTypeAttackSystem : MonoBehaviour
                 Attack(target);
             }
 
-            BB.GetVariable<Variable<bool>>("isWork").Value = true;
-            //BB.GetVariable<Variable<bool>>("isDetect").Value = false;
-            //BB.GetVariable<Variable<Transform>>("target").Value = null;
+            bb.GetVariable<Variable<bool>>("isWork").Value = true;
+            //bb.GetVariable<Variable<bool>>("isDetect").Value = false;
+            //bb.GetVariable<Variable<Transform>>("target").Value = null;
             return;
         }
         
         //fail, rework
-        BB.GetVariable<Variable<bool>>("isWork").Value = true;
+        bb.GetVariable<Variable<bool>>("isWork").Value = true;
     }
 
     public void Attack()

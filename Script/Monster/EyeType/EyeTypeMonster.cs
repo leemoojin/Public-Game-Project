@@ -7,7 +7,7 @@ public class EyeTypeMonster : MonoBehaviour
 {
     [field: Header("References")]
     [field: SerializeField] public MonsterDataSO MonsterData { get; private set; }
-    public Blackboard BB;
+    public Blackboard bb;
 
     [field: Header("State")]
     public EyeTypeMonsterState curState;
@@ -26,31 +26,31 @@ public class EyeTypeMonster : MonoBehaviour
 
     private void Start()
     {
-        if (BB != null)
+        if (bb != null)
         {
-            BB.GetVariable<Variable<float>>("findRange").Value = MonsterData.EyeType.FindRange;
-            BB.GetVariable<Variable<float>>("moveRange").Value = MonsterData.EyeType.ChaseRange;
-            BB.GetVariable<Variable<float>>("viewAngle").Value = MonsterData.EyeType.ViewAngle;
-            BB.GetVariable<Variable<float>>("baseSpeed").Value = MonsterData.EyeType.BaseSpeed;
-            BB.GetVariable<Variable<float>>("walkSpeedModifier").Value = MonsterData.EyeType.WalkSpeedModifier;
-            BB.GetVariable<Variable<float>>("runSpeedModifier").Value = MonsterData.EyeType.RunSpeedModifier;
+            bb.GetVariable<Variable<float>>("findRange").Value = MonsterData.EyeType.FindRange;
+            bb.GetVariable<Variable<float>>("moveRange").Value = MonsterData.EyeType.ChaseRange;
+            bb.GetVariable<Variable<float>>("viewAngle").Value = MonsterData.EyeType.ViewAngle;
+            bb.GetVariable<Variable<float>>("baseSpeed").Value = MonsterData.EyeType.BaseSpeed;
+            bb.GetVariable<Variable<float>>("walkSpeedModifier").Value = MonsterData.EyeType.WalkSpeedModifier;
+            bb.GetVariable<Variable<float>>("runSpeedModifier").Value = MonsterData.EyeType.RunSpeedModifier;
 
             if ((monsterSetting & MonsterSetting.HaveDestination) == MonsterSetting.HaveDestination)
             {
                 Debug.Log($"목적지 이동");
                 // move to destination
-                BB.GetVariable<Variable<bool>>("haveDestination").Value = true;
+                bb.GetVariable<Variable<bool>>("haveDestination").Value = true;
                 //BB.GetVariable<Variable<bool>>("isWork").Value = isWork;
             }
             else 
             {
                 //BB.GetVariable<Variable<bool>>("isWork").Value = isWork;
-                BB.GetVariable<Variable<int>>("curState").Value = (int)EyeTypeMonsterState.Idle;
+                bb.GetVariable<Variable<int>>("curState").Value = (int)EyeTypeMonsterState.Idle;
                 animator.SetBool("Idle", true);
             }
 
-            if ((monsterSetting & MonsterSetting.CanPatrol) == MonsterSetting.CanPatrol) BB.GetVariable<Variable<bool>>("canPatrol").Value = true;
-            if ((monsterSetting & MonsterSetting.IsWork) == MonsterSetting.IsWork) BB.GetVariable<Variable<bool>>("isWork").Value = true;
+            if ((monsterSetting & MonsterSetting.CanPatrol) == MonsterSetting.CanPatrol) bb.GetVariable<Variable<bool>>("canPatrol").Value = true;
+            if ((monsterSetting & MonsterSetting.IsWork) == MonsterSetting.IsWork) bb.GetVariable<Variable<bool>>("isWork").Value = true;
 
         }
 
@@ -58,6 +58,6 @@ public class EyeTypeMonster : MonoBehaviour
 
     public void MonsterWork()
     {
-        BB.GetVariable<Variable<bool>>("isWork").Value = true;
+        bb.GetVariable<Variable<bool>>("isWork").Value = true;
     }
 }

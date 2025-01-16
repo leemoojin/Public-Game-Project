@@ -17,6 +17,8 @@ public class MonsterMovePlayerTarget : MoveToTransform
 
     public override void OnEnter()
     {
+        //Debug.Log($"MonsterMovePlayerTarget - OnEnter()");
+
         if (monsterType.Value == 1)
         {
             curState.Value = (int)EyeTypeMonsterState.Run;
@@ -49,6 +51,7 @@ public class MonsterMovePlayerTarget : MoveToTransform
 
     public override void OnExit()
     {
+        //Debug.Log($"MonsterMovePlayerTarget - OnExit()");
         agent.isStopped = true;
     }
 }
