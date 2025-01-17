@@ -1,5 +1,4 @@
 using MBT;
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 [AddComponentMenu("")]

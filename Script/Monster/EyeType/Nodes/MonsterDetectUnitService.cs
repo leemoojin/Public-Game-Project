@@ -7,115 +7,121 @@ using UnityEngine.Rendering;
 [MBTNode("Example/Monster Detect Unit Service")]
 public class MonsterDetectUnitService : Service
 {
-
     public BoolReference variableToSet;// isDetect
+    public BoolReference variableToSkip;
+    public BoolReference isLostTarget;
     public TransformReference self;
     public TransformReference detectorHigh;
     public TransformReference detectorLow;
     public TransformReference target;// Unit
     public FloatReference viewAngle;
     public FloatReference findRange;
-
+    public FloatReference moveRange;
+    public IntReference curState;
 
     public LayerMask obstructionMask;
     public LayerMask targetMask;
     public int rayCount = 30;
-    public List<Transform> detectList;
+    //public List<Transform> detectList;
 
-    //private bool _isLookObstruct = false;
+    private HashSet<Transform> detectList;
 
     public override void OnEnter()
     {
         base.OnEnter();
-        detectList = new List<Transform>();
+        detectList = new HashSet<Transform>();
+        //detectList = new List<Transform>();
     }
 
     public override void Task()
     {
+        if (!variableToSkip.Value) return;
         Detect();
     }
 
     private void Detect()
     {
-        float range = findRange.Value;
+        float range = curState.Value == (int)EarTypeMonsterState.Run ? moveRange.Value : findRange.Value;
         float stepAngle = viewAngle.Value / rayCount;
+        bool isDetect = false;
 
         for (int i = 0; i <= rayCount; i++)
         {
             float angle = -viewAngle.Value / 2 + stepAngle * i;
             Vector3 directionLow = Quaternion.Euler(0, angle, 0) * detectorLow.Value.forward;
             Vector3 directionHigh = Quaternion.Euler(0, angle, 0) * detectorHigh.Value.forward;
+            //Debug.DrawRay(detectorLow.Value.position, directionLow * range, Color.green);
 
-            Debug.DrawRay(detectorLow.Value.position, directionLow * range, Color.green);
+            if (RaycastCheck(detectorLow.Value.position, directionLow, range) || RaycastCheck(detectorHigh.Value.position, directionHigh, range))
+            {
+                isDetect = true;
+            }           
+        }
 
-            if (Physics.Raycast(detectorLow.Value.position, directionLow, out RaycastHit hitLow, range, targetMask) && !Physics.Raycast(detectorLow.Value.position, directionLow, range, obstructionMask))
-            {
-                //Debug.Log($"DetectedLow {hitLow.collider.name} at angle {angle}");        
-                CheckDetectList(hitLow.collider.transform);
-            }
-            else if (Physics.Raycast(detectorHigh.Value.position, directionHigh, out RaycastHit hitHigh, range, targetMask) && !Physics.Raycast(detectorHigh.Value.position, directionHigh, range, obstructionMask))
-            {
-                //Debug.Log($"DetectedHigh {hitHigh.collider.name} at angle {angle}");
-                CheckDetectList(hitHigh.collider.transform);
-            }
+        if (!isDetect)
+        {            
+            isLostTarget.Value = true;
+            target.Value = null;
+            variableToSet.Value = false;
+            //Debug.Log("detect fail");
+        }
+        else if (isLostTarget.Value)
+        {
+            isLostTarget.Value = false;
         }
 
         CheckDistance();
     }
 
-    private void CheckDetectList(Transform transform)
+    private bool RaycastCheck(Vector3 origin, Vector3 direction, float range)
     {
-        if (detectList.Count == 0)
+        if (Physics.Raycast(origin, direction, range, obstructionMask))
         {
-            detectList.Add(transform);
-            //Debug.Log($"추가 {transform}");
-            return;
+            return false;
         }
 
-        bool isSame = false;
-        for (int i = 0; i < detectList.Count; i++)
+        if (Physics.Raycast(origin, direction, out RaycastHit hit, range, targetMask))
         {
-            //Debug.Log($"비교 {detectList[i]}, {transform}");
-
-            if (detectList[i] == transform)
-            {
-                isSame = true;
-            }
+            detectList.Add(hit.collider.transform);
+            //Debug.Log($"Detected {hit.collider.name}");
+            return true;
         }
-
-        if (!isSame)
-        {
-            detectList.Add(transform);
-            //Debug.Log($"비교 추가 {transform}");
-        }
+        return false;
     }
-
     private void CheckDistance()
     {
-        if (detectList.Count == 0)
-        {
-            //target.Value = null;
-            //variableToSet.Value = false;
-            detectList.Clear();
-            if(target.Value == null) variableToSet.Value = false;
-            //Debug.Log("발견 못함");
+        if (detectList == null || detectList.Count == 0)
+        {          
+            if (target.Value == null) variableToSet.Value = false;
             return;
         }
-        
-        Transform temp = null;
-        for (int i = 0; i < detectList.Count; i++)
+
+        Transform closestTarget = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (var detected in detectList)
         {
-            if (i == 0)
+            if (detected == null) continue;
+
+            float distance = Vector3.Distance(self.Value.position, detected.position);
+            if (distance < closestDistance)
             {
-                temp = detectList[i];
-                continue;
+                closestTarget = detected;
+                closestDistance = distance;
             }
-            if (Vector3.Distance(self.Value.position, temp.position) > Vector3.Distance(self.Value.position, detectList[i].position)) temp = detectList[i]; 
         }
 
-        target.Value = temp;
-        variableToSet.Value = true;
-        //Debug.Log("발견");
-    }
+        if (closestTarget != null)
+        {
+            target.Value = closestTarget;
+            variableToSet.Value = true;
+        }
+        else
+        {
+            target.Value = null;
+            variableToSet.Value = false;
+        }
 
+        //Debug.Log($"Target {target.Value.name}");
+    }
 }

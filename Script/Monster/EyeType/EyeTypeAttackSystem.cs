@@ -11,6 +11,7 @@ public class EyeTypeAttackSystem : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        //Debug.Log($"hit");
         if (bb.GetVariable<Variable<int>>("curState").Value != (int)EyeTypeMonsterState.Attack) return;
 
         if (other.gameObject.layer == 7) 
@@ -26,14 +27,15 @@ public class EyeTypeAttackSystem : MonoBehaviour
                 Attack(target);
             }
 
-            bb.GetVariable<Variable<bool>>("isWork").Value = true;
+            //bb.GetVariable<Variable<bool>>("isWork").Value = true;
+            //bb.GetVariable<Variable<bool>>("isAttacking").Value = false;
             //bb.GetVariable<Variable<bool>>("isDetect").Value = false;
             //bb.GetVariable<Variable<Transform>>("target").Value = null;
             return;
         }
         
         //fail, rework
-        bb.GetVariable<Variable<bool>>("isWork").Value = true;
+        //bb.GetVariable<Variable<bool>>("isWork").Value = true;
     }
 
     public void Attack()

@@ -11,9 +11,9 @@ public class MonsterMovePlayerTarget : MoveToTransform
     public FloatReference moveRange;
     public FloatReference baseSpeed;
     public FloatReference runSpeedModifier;
+    public BoolReference variableToSkip;// lost to target
 
     public Animator animator;
-
 
     public override void OnEnter()
     {
@@ -41,6 +41,11 @@ public class MonsterMovePlayerTarget : MoveToTransform
 
     public override NodeResult Execute()
     {
+        if (variableToSkip.Value)
+        {
+            return NodeResult.failure;
+        }
+
         if (distanceToTarget.Value >= moveRange.Value)
         {
             return NodeResult.failure;

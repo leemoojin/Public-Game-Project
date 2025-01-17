@@ -8,6 +8,8 @@ public class EyeTypeMonster : MonoBehaviour
     [field: Header("References")]
     [field: SerializeField] public MonsterDataSO MonsterData { get; private set; }
     public Blackboard bb;
+    public Transform detectorHigh;
+    public Transform detectorLow;
 
     [field: Header("State")]
     public EyeTypeMonsterState curState;
@@ -22,7 +24,6 @@ public class EyeTypeMonster : MonoBehaviour
 
     [field: Header("Setting")]
     public MonsterSetting monsterSetting;
-    //public bool isWork;
 
     private void Start()
     {
@@ -30,6 +31,7 @@ public class EyeTypeMonster : MonoBehaviour
         {
             bb.GetVariable<Variable<float>>("findRange").Value = MonsterData.EyeType.FindRange;
             bb.GetVariable<Variable<float>>("moveRange").Value = MonsterData.EyeType.ChaseRange;
+            bb.GetVariable<Variable<float>>("attackRange").Value = MonsterData.EyeType.AttackRange;
             bb.GetVariable<Variable<float>>("viewAngle").Value = MonsterData.EyeType.ViewAngle;
             bb.GetVariable<Variable<float>>("baseSpeed").Value = MonsterData.EyeType.BaseSpeed;
             bb.GetVariable<Variable<float>>("walkSpeedModifier").Value = MonsterData.EyeType.WalkSpeedModifier;
@@ -37,23 +39,19 @@ public class EyeTypeMonster : MonoBehaviour
 
             if ((monsterSetting & MonsterSetting.HaveDestination) == MonsterSetting.HaveDestination)
             {
-                Debug.Log($"목적지 이동");
+                //Debug.Log($"목적지 이동");
                 // move to destination
                 bb.GetVariable<Variable<bool>>("haveDestination").Value = true;
-                //BB.GetVariable<Variable<bool>>("isWork").Value = isWork;
             }
             else 
             {
-                //BB.GetVariable<Variable<bool>>("isWork").Value = isWork;
                 bb.GetVariable<Variable<int>>("curState").Value = (int)EyeTypeMonsterState.Idle;
                 animator.SetBool("Idle", true);
             }
 
             if ((monsterSetting & MonsterSetting.CanPatrol) == MonsterSetting.CanPatrol) bb.GetVariable<Variable<bool>>("canPatrol").Value = true;
             if ((monsterSetting & MonsterSetting.IsWork) == MonsterSetting.IsWork) bb.GetVariable<Variable<bool>>("isWork").Value = true;
-
         }
-
     }
 
     public void MonsterWork()

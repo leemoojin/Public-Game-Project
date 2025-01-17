@@ -10,6 +10,7 @@ public class MonsterLostTarget : Leaf
     public override void OnEnter()
     {
         base.OnEnter();
+        Debug.Log($"MonsterLostTarget - OnEnter");
         target.Value = null;
     }
 
