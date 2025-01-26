@@ -20,7 +20,9 @@ public class MonsterMoveToDestination : Leaf
 
     public override void OnEnter()
     {
-        curState.Value = (int)EyeTypeMonsterState.Run;
+        //Debug.Log($"MonsterMoveToDestination - OnEnter()");
+
+        curState.Value = (int)EyeTypeMonsterState.Move;
         
         animator.SetBool("Run", true);
         animator.SetBool("Walk", false);
@@ -64,6 +66,8 @@ public class MonsterMoveToDestination : Leaf
 
     public override void OnExit()
     {
+        //Debug.Log($"MonsterMoveToDestination - OnExit()");
+
         base.OnExit();
         haveDestination.Value = false;
     }

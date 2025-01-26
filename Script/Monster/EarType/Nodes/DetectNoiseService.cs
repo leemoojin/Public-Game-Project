@@ -8,8 +8,9 @@ using UnityEngine;
 public class DetectNoiseService : Service
 {
     //public TransformReference variableToSet = new TransformReference(VarRefMode.DisableConstant);
-    public BoolReference variableToSetBool = new BoolReference(VarRefMode.DisableConstant);// isNoiseDetect
-    public BoolReference isFocusAround = new BoolReference(VarRefMode.DisableConstant);
+    public BoolReference variableToSetBool;// isNoiseDetect
+    public BoolReference isFocusAround;
+    public BoolReference canAttack;
     public Vector3Reference targetPos;// detination
     public FloatReference curDetectNoise;// check board
     public TransformReference self;
@@ -27,8 +28,16 @@ public class DetectNoiseService : Service
     public GameObject biggestNoiseObj;// private
     public List<Collider> noiseMakers = new List<Collider>();
 
+    public override void OnEnter()
+    {
+        base.OnEnter();
+        //Debug.Log($"DetectNoiseService - OnEnter() - isFocusAround : {isFocusAround.Value}");
+
+    }
+
     public override void Task()
     {
+        if (canAttack.Value) return;
         Detect();
     }
 
@@ -87,5 +96,12 @@ public class DetectNoiseService : Service
             curDetectNoise.Value = noiseAmount;
             biggestNoiseObj = noiseMaker;
         }
+    }
+
+    public override void OnExit()
+    {
+        base.OnExit();
+        //Debug.Log($"DetectNoiseService - OnExit() - isFocusAround : {isFocusAround.Value}");
+
     }
 }

@@ -3,51 +3,60 @@ using UnityEngine;
 
 [AddComponentMenu("")]
 [MBTNode("Example/Focus Around Wait")]
-public class FocusAroundWait : Wait
+public class FocusAroundWait : Leaf
 {
     public IntReference curState;
-    public IntReference state;
-    public BoolReference variableToSkip;// isFocusAround
+    public BoolReference isFocusAround;
     public BoolReference isDetect;
+    public BoolReference canAttack;
+    public FloatReference focusTime;
 
     public Animator animator;
 
-    public override void OnEnter()
-    {
-        Debug.Log("FocusAroundWait - OnEnter()");
-        if (!variableToSkip.Value) 
-        {
-            curState.Value = (int)EarTypeMonsterState.Focus;
-            variableToSkip.Value = true;
-            animator.SetBool("Idle", false);
-            animator.SetBool("Walk", false);
-            animator.SetBool("Run", false);
-            animator.SetBool("Focus", true);
-            //animator.SetBool("Attack", false);
-        }
+    private float _timer;
 
-        base.OnEnter();
+    
+
+    public override void OnEnter()
+    {       
+        curState.Value = (int)EarTypeMonsterState.Focus;
+        isDetect.Value = false;
+        _timer = 0f;
+        animator.SetBool("Idle", false);
+        animator.SetBool("Walk", false);
+        animator.SetBool("Run", false);
+        animator.SetBool("Focus", true);
+        //animator.SetBool("Attack", false);
+        //Debug.Log($"FocusAroundWait - OnEnter() - isFocusAround : {isFocusAround.Value}, isDetect : {isDetect.Value}");
+
     }
 
     public override NodeResult Execute()
     {
-        if (!variableToSkip.Value)
+        //Debug.Log($"FocusAroundWait - Execute() - _timer, {_timer}");
+
+        if (canAttack.Value || isDetect.Value || canAttack.Value)
         {
-            Debug.Log("FocusAroundWait - Execute() - variableToSkip");
+            isFocusAround.Value = false;
             return NodeResult.success;
         }
-        return base.Execute();
+
+
+        if (_timer >= focusTime.Value)
+        {
+            //Debug.Log($"FocusAroundWait - Execute() - _timer, {_timer}, focusTime : {focusTime.Value}");
+            return NodeResult.success;
+        }
+
+        _timer += this.DeltaTime;
+        return NodeResult.running;
     }
+
 
     public override void OnExit()
     {
-        base.OnExit();
+        //Debug.Log($"FocusAroundWait - OnExit()");
 
-        if (variableToSkip.Value)
-        {
-            Debug.Log("FocusAroundWait - OnExit()");
-            isDetect.Value = false;
-            variableToSkip.Value = false;
-        }
+        if(_timer >= focusTime.Value) isFocusAround.Value = false;
     }
 }

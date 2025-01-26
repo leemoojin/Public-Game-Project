@@ -5,29 +5,33 @@ public class EarTypeMonster : MonoBehaviour
 {
     [field: Header("References")]
     [field: SerializeField] public MonsterDataSO MonsterData { get; private set; }
-    public Blackboard BB;
+    public Blackboard bb;
+
+    [field: Header("State")]
+    public EarTypeMonsterState curState;
 
     [field: Header("Animations")]
     public Animator animator;
 
-    [field: Header("Info")]
-    public bool isWork;
+    [field: Header("Setting")]
+    public MonsterSetting monsterSetting;
 
     private void Start()
     {
-        if (BB != null)
+        if (bb != null)
         {
-            BB.GetVariable<Variable<float>>("detectRange").Value = MonsterData.EarType.DetectRange;
-            BB.GetVariable<Variable<float>>("detectNoiseMin").Value = MonsterData.EarType.DetectNoiseMin;
-            BB.GetVariable<Variable<float>>("detectNoiseMax").Value = MonsterData.EarType.DetectNoiseMax;
-            BB.GetVariable<Variable<float>>("baseSpeed").Value = MonsterData.EarType.BaseSpeed;
-            BB.GetVariable<Variable<float>>("walkSpeedModifier").Value = MonsterData.EarType.WalkSpeedModifier;
-            BB.GetVariable<Variable<float>>("runSpeedModifier").Value = MonsterData.EarType.RunSpeedModifier;
-            BB.GetVariable<Variable<float>>("attackRange").Value = MonsterData.EarType.AttackRange;
-            BB.GetVariable<Variable<bool>>("isWork").Value = isWork;
-            BB.GetVariable<Variable<int>>("curState").Value = (int)EarTypeMonsterState.Idle;
-        }
+            bb.GetVariable<Variable<float>>("detectRange").Value = MonsterData.EarType.DetectRange;
+            bb.GetVariable<Variable<float>>("detectNoiseMin").Value = MonsterData.EarType.DetectNoiseMin;
+            bb.GetVariable<Variable<float>>("detectNoiseMax").Value = MonsterData.EarType.DetectNoiseMax;
+            bb.GetVariable<Variable<float>>("baseSpeed").Value = MonsterData.EarType.BaseSpeed;
+            bb.GetVariable<Variable<float>>("walkSpeedModifier").Value = MonsterData.EarType.WalkSpeedModifier;
+            bb.GetVariable<Variable<float>>("runSpeedModifier").Value = MonsterData.EarType.RunSpeedModifier;
+            bb.GetVariable<Variable<float>>("attackRange").Value = MonsterData.EarType.AttackRange;
+            bb.GetVariable<Variable<int>>("curState").Value = (int)EarTypeMonsterState.Idle;
 
+            if ((monsterSetting & MonsterSetting.CanPatrol) == MonsterSetting.CanPatrol) bb.GetVariable<Variable<bool>>("canPatrol").Value = true;
+            if ((monsterSetting & MonsterSetting.IsWork) == MonsterSetting.IsWork) bb.GetVariable<Variable<bool>>("isWork").Value = true;
+        }
         animator.SetBool("Idle", true);
     }
 }

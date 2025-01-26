@@ -29,6 +29,7 @@ public class MonsterDetectUnitService : Service
     public override void OnEnter()
     {
         base.OnEnter();
+        //Debug.Log($"MonsterDetectUnitService - OnEnter()");
         detectList = new HashSet<Transform>();
         //detectList = new List<Transform>();
     }
@@ -50,7 +51,7 @@ public class MonsterDetectUnitService : Service
             float angle = -viewAngle.Value / 2 + stepAngle * i;
             Vector3 directionLow = Quaternion.Euler(0, angle, 0) * detectorLow.Value.forward;
             Vector3 directionHigh = Quaternion.Euler(0, angle, 0) * detectorHigh.Value.forward;
-            //Debug.DrawRay(detectorLow.Value.position, directionLow * range, Color.green);
+            Debug.DrawRay(detectorLow.Value.position, directionLow * range, Color.green);
 
             if (RaycastCheck(detectorLow.Value.position, directionLow, range) || RaycastCheck(detectorHigh.Value.position, directionHigh, range))
             {
@@ -115,6 +116,7 @@ public class MonsterDetectUnitService : Service
         {
             target.Value = closestTarget;
             variableToSet.Value = true;
+            //Debug.Log($"Å½Áö´ë»ó : {target.Value}, Å½Áö¿©ºÎ : {variableToSet.Value}");
         }
         else
         {

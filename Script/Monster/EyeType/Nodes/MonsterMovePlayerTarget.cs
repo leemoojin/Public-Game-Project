@@ -11,6 +11,7 @@ public class MonsterMovePlayerTarget : MoveToTransform
     public FloatReference moveRange;
     public FloatReference baseSpeed;
     public FloatReference runSpeedModifier;
+    public FloatReference attackRange;
     public BoolReference variableToSkip;// lost to target
 
     public Animator animator;
@@ -41,16 +42,24 @@ public class MonsterMovePlayerTarget : MoveToTransform
 
     public override NodeResult Execute()
     {
-        if (variableToSkip.Value)
+        if (distanceToTarget.Value <= attackRange.Value)
         {
+            //Debug.Log($"MonsterMovePlayerTarget - Execute() - 공격범위");
+            return NodeResult.success;
+        }
+
+        if (variableToSkip.Value && distanceToTarget.Value >= moveRange.Value)
+        {
+            //Debug.Log($"MonsterMovePlayerTarget - Execute() - 탐지실패, 거리 벗어남");
             return NodeResult.failure;
         }
 
-        if (distanceToTarget.Value >= moveRange.Value)
-        {
-            return NodeResult.failure;
-        }        
-        
+
+        //if (distanceToTarget.Value >= moveRange.Value)
+        //{
+        //    return NodeResult.failure;
+        //}        
+
         return base.Execute();
     }
 
@@ -58,5 +67,9 @@ public class MonsterMovePlayerTarget : MoveToTransform
     {
         //Debug.Log($"MonsterMovePlayerTarget - OnExit()");
         agent.isStopped = true;
+        animator.SetBool("Run", false);
+        animator.SetBool("Walk", false);
+        animator.SetBool("Idle", true);
+        animator.SetBool("Attack", false);
     }
 }

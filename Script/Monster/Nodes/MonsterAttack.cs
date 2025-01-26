@@ -1,4 +1,5 @@
 ﻿using MBT;
+using NPC;
 using UnityEngine;
 
 [AddComponentMenu("")]
@@ -11,12 +12,13 @@ public class MonsterAttack : Leaf
     public IntReference curState;
     public TransformReference target;
 
+    public Transform self;
+
     public Animator animator;
     private AnimatorStateInfo stateInfo;
 
     private bool _isNPC;
     private bool _isPlayer;
-
 
     public override void OnEnter()
     {        
@@ -38,7 +40,12 @@ public class MonsterAttack : Leaf
         }
         else if (target.Value.gameObject.layer == 7)
         {
-            target.Value.gameObject.GetComponent<NPC.NPC>().NpcStop();
+            LookAtTarget();
+
+            //target.Value.gameObject.GetComponent<NPC.NPC>().NpcStop();
+            NPCDay1JHS nPCDay1JHS;
+            if(target.Value.gameObject.TryGetComponent<NPCDay1JHS>(out nPCDay1JHS)) nPCDay1JHS.NpcStop();
+
             _isNPC = true;
             isAttacking.Value = true;
             curState.Value = (int)EyeTypeMonsterState.Attack;
@@ -78,6 +85,12 @@ public class MonsterAttack : Leaf
         }
 
         return NodeResult.running;
+    }
+
+    private void LookAtTarget()
+    {
+        Vector3 direction = target.Value.position - self.position;
+        self.rotation = Quaternion.LookRotation(direction.normalized);
     }
 
     public override void OnExit()

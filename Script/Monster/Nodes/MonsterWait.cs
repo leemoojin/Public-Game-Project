@@ -8,6 +8,7 @@ public class MonsterWait : Wait
     public IntReference curState;
     public IntReference monsterType;
     public BoolReference variableToSkip;
+    public BoolReference canAttack;
 
     public Animator animator;
 
@@ -40,7 +41,7 @@ public class MonsterWait : Wait
 
     public override NodeResult Execute()
     {
-        if (variableToSkip.Value)
+        if (variableToSkip.Value || canAttack.Value)
         {
            //Debug.Log("MonsterWait - Execute() - variableToSkip");
             return NodeResult.failure; 

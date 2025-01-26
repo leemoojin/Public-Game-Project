@@ -10,6 +10,7 @@ public class MonsterPatrol : MoveToVector
     public FloatReference walkSpeedModifier;
     public IntReference curState;
     public IntReference monsterType;
+    public BoolReference canAttack;
 
     public Animator animator;
     //public float moveSpeed = 5f;
@@ -46,7 +47,7 @@ public class MonsterPatrol : MoveToVector
 
     public override NodeResult Execute()
     {
-        if (variableToSkip.Value)
+        if (variableToSkip.Value || canAttack.Value)
         {
             //Debug.Log("MonsterPatrol - variableToSkip()");
             return NodeResult.failure;
