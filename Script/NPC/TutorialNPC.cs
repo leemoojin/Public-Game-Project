@@ -16,15 +16,20 @@ namespace NPC
 
         public void Interact()
         {
-            Debug.Log("NPCInteract - NPC와 상호작용 성공");
-            
             IsInteractable = false;
-            shutter.IsInteractable = true;
-            shutter.EBtn.SetActive(true);
+            
             Destroy(EBtn);
+            UIManager.Instance.DialogueOpen(false);
+            UIManager.Instance.dialogueEnd += IntereactEBtn;
         }
 
         [SerializeField] private Shutter shutter;
         [SerializeField] private GameObject EBtn;
+
+        void IntereactEBtn()
+        {
+            shutter.IsInteractable = true;
+            shutter.EBtn.SetActive(true);
+        }
     }
 }

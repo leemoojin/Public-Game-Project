@@ -1,15 +1,13 @@
-癤퓎sing MBT;
-using System;
-using UnityEditor;
+using MBT;
 using UnityEngine;
 using UnityEngine.AI;
 
 namespace NPC
 {
-    public class NPC : MonoBehaviour, IInteractable, IAttackable
+    public class NPCDay1JHS : MonoBehaviour, IInteractable, IAttackable
     {
         [field: Header("References")]
-        [field: SerializeField] public NPCDataSO NpcData { get; private set; }
+        [field: SerializeField] private NPCDataSO NpcData { get; set; }
         public Blackboard bb;
         public Transform player;
         public UnitSoundSystem soundSystem;
@@ -22,10 +20,11 @@ namespace NPC
         [field: Header("Interactable")]
         [field: SerializeField] public bool IsInteractable { get; set; }
         [field: SerializeField] public float InteractHoldTime { get; set; } = 0f;
-        
+
         [field: Header("Setting")]
         public NPCSetting npcSetting;
 
+        // player ui
         public string ObjectName { get; set; }
         public string InteractKey { get; set; }
         public string InteractType { get; set; }
@@ -33,7 +32,6 @@ namespace NPC
         private Transform _self;
         private bool _hasReachedPlayer = false;
         private bool _lookAtPlayer = false;
-        
 
         private void Start()
         {
@@ -53,8 +51,6 @@ namespace NPC
                 bb.GetVariable<Variable<float>>("crouchModifier").Value = NpcData.Data.CrouchSpeedModifier;
                 bb.GetVariable<Variable<int>>("curState").Value = (int)NPCState.Idle;
             }
-
-            //soundSystem.PlaySoundTemp();
         }
 
         private void Update()
@@ -72,6 +68,10 @@ namespace NPC
 
             if ((npcSetting & NPCSetting.CanRepeat) != NPCSetting.CanRepeat) IsInteractable = false;
 
+            // 이벤트 매니저에서 흉기 획득 처리가 되었을 때 -> NPC 사망로직 추가 할 것 (하이드 루트)
+
+            // 이벤트 매니저에서 탐색 완료 처리가 되었을 때 -> NPC Player follow 로직 추가 (지킬 루트)
+
             if ((npcSetting & NPCSetting.CanTalk) == NPCSetting.CanTalk)
             {
                 // NPC dialog
@@ -86,13 +86,14 @@ namespace NPC
             {
                 animator.SetBool("Idle", false);
                 animator.SetBool("@Follow", true);
-              
+
                 bb.GetVariable<Variable<bool>>("isFollow").Value = true;
+                IsInteractable = false;
             }
         }
 
         private void LookAtPlayer()
-        {     
+        {
             Vector3 direction = player.position - _self.position;
 
             direction.y = 0;
@@ -115,14 +116,6 @@ namespace NPC
                 }
             }
         }
-
-        //private void OnTriggerEnter(Collider other)
-        //{
-        //    if (other.gameObject.layer == 8 && BB.GetVariable<Variable<int>>("curState").Value != (int)NPCState.Dead)
-        //    {
-        //        NPCDead();
-        //    }
-        //}
 
         private void NPCDead()
         {
@@ -160,6 +153,6 @@ namespace NPC
             animator.SetBool("Dead", false);
         }
     }
-}
 
+}
 
