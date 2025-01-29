@@ -8,6 +8,7 @@ public class Player : MonoBehaviour, INoise, IAttackable
 
     [field: Header("State")]
     [field: SerializeField] public PlayerEnum.PlayerState CurState { get; set; }
+    public bool IsWork { get; set; }
 
     // INoise
     [field: Header("Noise")]
@@ -32,8 +33,7 @@ public class Player : MonoBehaviour, INoise, IAttackable
     private void Awake()
     {
         //Debug.Log("Player - Awake()");
-        Input.Init();
-        Input.PlayerInputSwitch(true);
+        PlayerWorkOn();
         Controller = GetComponent<CharacterController>();
         ForceReceiver = GetComponent<ForceReceiver>();
         FootstepsSystem = GetComponent<FootstepsSystem>();
@@ -79,5 +79,17 @@ public class Player : MonoBehaviour, INoise, IAttackable
     {
         // gameover
         Debug.Log($"gameover");
+    }
+
+    public void PlayerWorkOn()
+    {
+        IsWork = true;
+        Input.PlayerInputSwitch(true);
+    }
+
+    public void PlayerWorkOff()
+    {
+        IsWork = false;
+        Input.PlayerInputSwitch(false);
     }
 }

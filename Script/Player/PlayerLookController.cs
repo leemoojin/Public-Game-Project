@@ -30,6 +30,8 @@ public class PlayerLookController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (!Player.IsWork) return;
+
         playerTransform.rotation = Quaternion.Euler(0, _pov.m_HorizontalAxis.Value, 0);
 
         if (Player.CurState == PlayerEnum.PlayerState.RunState)
