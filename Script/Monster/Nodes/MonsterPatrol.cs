@@ -1,11 +1,12 @@
 using MBT;
+using NPC;
 using UnityEngine;
 
 [AddComponentMenu("")]
 [MBTNode("Example/Monster Patrol")]
 public class MonsterPatrol : MoveToVector
 {
-    public BoolReference variableToSkip;
+    public BoolReference variableToSkip;//isDetect
     public FloatReference baseSpeed;
     public FloatReference walkSpeedModifier;
     public IntReference curState;
@@ -13,6 +14,7 @@ public class MonsterPatrol : MoveToVector
     public BoolReference canAttack;
 
     public Animator animator;
+    public UnitSoundSystem soundSystem;
     //public float moveSpeed = 5f;
 
     public override void OnEnter()
@@ -24,9 +26,15 @@ public class MonsterPatrol : MoveToVector
 
         if (monsterType.Value == 1)
         {
-            curState.Value = (int)EyeTypeMonsterState.Walk;
             //Debug.Log($"MonsterPatrol - OnEnter() - curState walk : {(EyeTypeMonsterState)curState.Value}");
 
+            EyeTypeMonsterState state = (EyeTypeMonsterState)curState.Value;
+            if (!state.HasFlag(EyeTypeMonsterState.Walk))
+            {
+                soundSystem.StopStepAudio();
+                curState.Value = (int)EyeTypeMonsterState.Walk;
+            }
+            soundSystem.PlayStepSound((EyeTypeMonsterState)curState.Value);
             animator.SetBool("Idle", false);
             animator.SetBool("Run", false);
             animator.SetBool("Attack", false);
@@ -34,7 +42,13 @@ public class MonsterPatrol : MoveToVector
         }
         else if (monsterType.Value == 2)
         {
-            curState.Value = (int)EarTypeMonsterState.Walk;
+            EarTypeMonsterState state = (EarTypeMonsterState)curState.Value;
+            if (!state.HasFlag(EarTypeMonsterState.Walk))
+            {
+                soundSystem.StopStepAudio();
+                curState.Value = (int)EarTypeMonsterState.Walk;
+            }
+            soundSystem.PlayStepSound((EarTypeMonsterState)curState.Value);
             animator.SetBool("Idle", false);
             animator.SetBool("Walk", true);
             animator.SetBool("Run", false);
@@ -52,6 +66,11 @@ public class MonsterPatrol : MoveToVector
             //Debug.Log("MonsterPatrol - variableToSkip()");
             return NodeResult.failure;
         }
+
+        if (monsterType.Value == 1 && soundSystem.GroundChange) soundSystem.PlayStepSound((EyeTypeMonsterState)curState.Value);
+        else if (monsterType.Value == 2 && soundSystem.GroundChange) soundSystem.PlayStepSound((EarTypeMonsterState)curState.Value);
+
         return base.Execute();
     }
+
 }

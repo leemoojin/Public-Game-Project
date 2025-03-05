@@ -10,65 +10,53 @@ public class MonsterMoveToDestination : Leaf
     public FloatReference baseSpeed;
     public FloatReference runSpeedModifier;
     public BoolReference haveDestination;
-    public BoolReference variableToSkip;
-    public TransformReference destination;
+    public BoolReference isDetect;
+    public BoolReference isOriginPosition;
+    public Vector3Reference destination;
 
-    public Animator animator;
-    public NavMeshAgent agent;
+    public Animator animator;// monster
+    public NavMeshAgent agent;// monster
     public float stopDistance = 1f;
-
+    public UnitSoundSystem soundSystem;// monster
 
     public override void OnEnter()
     {
-        //Debug.Log($"MonsterMoveToDestination - OnEnter()");
-
-        curState.Value = (int)EyeTypeMonsterState.Move;
-        
+        EyeTypeMonsterState state = (EyeTypeMonsterState)curState.Value;
+        if (!state.HasFlag(EyeTypeMonsterState.Move))
+        {
+            soundSystem.StopStepAudio();
+            curState.Value = (int)EyeTypeMonsterState.Move;
+        }
+        soundSystem.PlayStepSound((EyeTypeMonsterState)curState.Value);
         animator.SetBool("Run", true);
         animator.SetBool("Walk", false);
         animator.SetBool("Idle", false);
         animator.SetBool("Attack", false);
-
         agent.speed = baseSpeed.Value * runSpeedModifier.Value;
         agent.isStopped = false;
-        agent.SetDestination(destination.Value.position);
-
-        base.OnEnter();
+        agent.SetDestination(destination.Value);
     }
 
     public override NodeResult Execute()
     {
-        if(variableToSkip.Value) return NodeResult.success;
+        if(isDetect.Value) return NodeResult.success;
 
-        // Check if path is ready
-        if (agent.pathPending)
+        if (soundSystem.GroundChange)
         {
-            //Debug.Log("if (agent.pathPending)");
-            if (agent.isStopped) agent.isStopped = false;
-            return NodeResult.running;
+            soundSystem.PlayStepSound((EyeTypeMonsterState)curState.Value);
         }
-        // Check if agent is very close to destination
-        if (agent.remainingDistance < stopDistance)
-        {
-            //Debug.Log("if (agent.remainingDistance < stopDistance)");
-            return NodeResult.success;
-        }
-        // Check if there is any path (if not pending, it should be set)
-        if (agent.hasPath)
-        {
-            //Debug.Log("if (agent.hasPath)");
-            if (agent.isStopped) agent.isStopped = false;
-            return NodeResult.running;
-        }
-        // By default return failure
+
+        if (agent.pathPending) return NodeResult.running;
+        if (agent.hasPath) return NodeResult.running;
+        if (agent.remainingDistance < stopDistance) return NodeResult.success;
+
         return NodeResult.failure;
     }
 
     public override void OnExit()
     {
         //Debug.Log($"MonsterMoveToDestination - OnExit()");
-
-        base.OnExit();
         haveDestination.Value = false;
+        isOriginPosition.Value = false;
     }
 }

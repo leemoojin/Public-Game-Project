@@ -11,7 +11,7 @@ public class MoveToTransform : Leaf
     public float stopDistance = 2f;
     [Tooltip("How often target position should be updated")]
     public float updateInterval = 1f;
-    private float time = 0;
+    protected float time = 0;
 
     public override void OnEnter()
     {

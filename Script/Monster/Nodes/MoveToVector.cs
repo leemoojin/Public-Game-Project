@@ -10,7 +10,7 @@ public class MoveToVector : Leaf
     public NavMeshAgent agent;
     public float stopDistance = 2f;// SO
     public float updateInterval = 1f;
-    private float time = 0;
+    protected float time = 0;
 
     //public IntReference state;
 

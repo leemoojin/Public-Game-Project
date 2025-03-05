@@ -1,106 +1,105 @@
 using MBT;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 [AddComponentMenu("")]
 [MBTNode("Example/Monster Detect Unit Service")]
 public class MonsterDetectUnitService : Service
 {
-    public BoolReference variableToSet;// isDetect
-    public BoolReference variableToSkip;
+    public BoolReference isDetect;
+    public BoolReference skipValueIsWork;
     public BoolReference isLostTarget;
+
     public TransformReference self;
-    public TransformReference detectorHigh;
-    public TransformReference detectorLow;
-    public TransformReference target;// Unit
+    public TransformReference target;   
+
     public FloatReference viewAngle;
     public FloatReference findRange;
-    public FloatReference moveRange;
+    public FloatReference chaseRange;
+
     public IntReference curState;
 
     public LayerMask obstructionMask;
     public LayerMask targetMask;
-    public int rayCount = 30;
-    //public List<Transform> detectList;
 
-    private HashSet<Transform> detectList;
+    public Transform detectorHigh;
+    public Transform detectorLow;
+    private float _stepAngle;
+    private int _rayCount;
+
+    private List<Transform> _detectList = new List<Transform>();
 
     public override void OnEnter()
     {
-        base.OnEnter();
         //Debug.Log($"MonsterDetectUnitService - OnEnter()");
-        detectList = new HashSet<Transform>();
-        //detectList = new List<Transform>();
+        _rayCount = Mathf.CeilToInt(viewAngle.Value * 0.52f);
+        _stepAngle = viewAngle.Value / _rayCount;
+        base.OnEnter();        
     }
 
     public override void Task()
     {
-        if (!variableToSkip.Value) return;
-        Detect();
+        if (!skipValueIsWork.Value) return;
+        DetectTargets();
     }
 
-    private void Detect()
+    private void DetectTargets()
     {
-        float range = curState.Value == (int)EarTypeMonsterState.Run ? moveRange.Value : findRange.Value;
-        float stepAngle = viewAngle.Value / rayCount;
-        bool isDetect = false;
+        _detectList.Clear();
+        float range = curState.Value == (int)EarTypeMonsterState.Run ? chaseRange.Value : findRange.Value;
+        bool foundTarget = false;
 
-        for (int i = 0; i <= rayCount; i++)
+        for (int i = 0; i <= _rayCount; i++)
         {
-            float angle = -viewAngle.Value / 2 + stepAngle * i;
-            Vector3 directionLow = Quaternion.Euler(0, angle, 0) * detectorLow.Value.forward;
-            Vector3 directionHigh = Quaternion.Euler(0, angle, 0) * detectorHigh.Value.forward;
-            Debug.DrawRay(detectorLow.Value.position, directionLow * range, Color.green);
+            float angle = -viewAngle.Value / 2 + _stepAngle * i;
+            Vector3 directionLow = Quaternion.Euler(0, angle, 0) * detectorLow.forward;
+            Vector3 directionHigh = Quaternion.Euler(0, angle, 0) * detectorHigh.forward;
+            Debug.DrawRay(detectorLow.position, directionLow * range, Color.green);
 
-            if (RaycastCheck(detectorLow.Value.position, directionLow, range) || RaycastCheck(detectorHigh.Value.position, directionHigh, range))
+            if (PerformRaycast(detectorLow.position, directionLow, range) || PerformRaycast(detectorHigh.position, directionHigh, range))
             {
-                isDetect = true;
+                foundTarget = true;
             }           
         }
 
-        if (!isDetect)
-        {            
-            isLostTarget.Value = true;
-            target.Value = null;
-            variableToSet.Value = false;
-            //Debug.Log("detect fail");
-        }
-        else if (isLostTarget.Value)
+        if (!foundTarget)
         {
-            isLostTarget.Value = false;
+            ResetTarget();
+            //Debug.Log($"detect fail, targe : {target.Value}");
         }
+        else if (isLostTarget.Value) isLostTarget.Value = false;
 
-        CheckDistance();
+        AssignClosestTarget();
     }
 
-    private bool RaycastCheck(Vector3 origin, Vector3 direction, float range)
+    private bool PerformRaycast(Vector3 origin, Vector3 direction, float range)
     {
-        if (Physics.Raycast(origin, direction, range, obstructionMask))
-        {
-            return false;
-        }
+        if (Physics.Raycast(origin, direction, range, obstructionMask)) return false;
 
         if (Physics.Raycast(origin, direction, out RaycastHit hit, range, targetMask))
         {
-            detectList.Add(hit.collider.transform);
-            //Debug.Log($"Detected {hit.collider.name}");
-            return true;
+            if (hit.collider != null)
+            {
+                _detectList.Add(hit.collider.transform);
+                //Debug.Log($"Detected {hit.collider.name}");
+                return true;
+            }
         }
         return false;
     }
-    private void CheckDistance()
+
+    private void AssignClosestTarget()
     {
-        if (detectList == null || detectList.Count == 0)
-        {          
-            if (target.Value == null) variableToSet.Value = false;
+        if (_detectList.Count == 0)
+        {
+            ResetTarget();
             return;
         }
 
         Transform closestTarget = null;
         float closestDistance = float.MaxValue;
 
-        foreach (var detected in detectList)
+        foreach (var detected in _detectList)
         {
             if (detected == null) continue;
 
@@ -115,15 +114,22 @@ public class MonsterDetectUnitService : Service
         if (closestTarget != null)
         {
             target.Value = closestTarget;
-            variableToSet.Value = true;
+            isDetect.Value = true;
+            isLostTarget.Value = false;
             //Debug.Log($"Å½Áö´ë»ó : {target.Value}, Å½Áö¿©ºÎ : {variableToSet.Value}");
         }
         else
         {
-            target.Value = null;
-            variableToSet.Value = false;
+            ResetTarget();
         }
 
         //Debug.Log($"Target {target.Value.name}");
+    }
+
+    private void ResetTarget()
+    {
+        isLostTarget.Value = true;
+        target.Value = null;    
+        isDetect.Value = false;   
     }
 }

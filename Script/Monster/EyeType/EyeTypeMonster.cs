@@ -1,15 +1,12 @@
 using MBT;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EyeTypeMonster : MonoBehaviour
+public class EyeTypeMonster : MonoBehaviour, IDeactivate
 {
     [field: Header("References")]
-    [field: SerializeField] public MonsterDataSO MonsterData { get; private set; }
+    [field: SerializeField] private EyeTypeMonsterDataSO MonsterData { get; set; }
     public Blackboard bb;
-    public Transform detectorHigh;
-    public Transform detectorLow;
 
     [field: Header("State")]
     public EyeTypeMonsterState curState;
@@ -17,45 +14,81 @@ public class EyeTypeMonster : MonoBehaviour
     [field: Header("Animations")]
     public Animator animator;
 
-    [field: Header("Destination")]
-    public Transform destination;
+    [field: Header("Nav")]
     public NavMeshAgent agent;
-    private bool _isArrival;
 
     [field: Header("Setting")]
-    public MonsterSetting monsterSetting;
+    public EyeTypeMonsterSetting monsterSetting;
+    [field: SerializeField] private Transform Destination { get; set; }
+    [field: SerializeField] private Transform TargetNpc { get; set; }
+
+    private void OnEnable()
+    {
+        GameManager.Instance.OnGameover += Deactivate;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.Instance.OnGameover -= Deactivate;
+    }
 
     private void Start()
     {
         if (bb != null)
         {
-            bb.GetVariable<Variable<float>>("findRange").Value = MonsterData.EyeType.FindRange;
-            bb.GetVariable<Variable<float>>("moveRange").Value = MonsterData.EyeType.ChaseRange;
-            bb.GetVariable<Variable<float>>("attackRange").Value = MonsterData.EyeType.AttackRange;
-            bb.GetVariable<Variable<float>>("viewAngle").Value = MonsterData.EyeType.ViewAngle;
-            bb.GetVariable<Variable<float>>("baseSpeed").Value = MonsterData.EyeType.BaseSpeed;
-            bb.GetVariable<Variable<float>>("walkSpeedModifier").Value = MonsterData.EyeType.WalkSpeedModifier;
-            bb.GetVariable<Variable<float>>("runSpeedModifier").Value = MonsterData.EyeType.RunSpeedModifier;
+            SetBlackboardVariable("findRange", MonsterData.Data.FindRange);
+            SetBlackboardVariable("chaseRange", MonsterData.Data.ChaseRange);
+            SetBlackboardVariable("attackRange", MonsterData.Data.AttackRange);
+            SetBlackboardVariable("viewAngle", MonsterData.Data.ViewAngle);
+            SetBlackboardVariable("baseSpeed", MonsterData.Data.BaseSpeed);
+            SetBlackboardVariable("walkSpeedModifier", MonsterData.Data.WalkSpeedModifier);
+            SetBlackboardVariable("runSpeedModifier", MonsterData.Data.RunSpeedModifier);
 
-            if ((monsterSetting & MonsterSetting.HaveDestination) == MonsterSetting.HaveDestination)
+            if (HasSetting(EyeTypeMonsterSetting.CanPatrol)) SetBlackboardVariable("canPatrol", true);
+            else
             {
-                //Debug.Log($"목적지 이동");
-                // move to destination
-                bb.GetVariable<Variable<bool>>("haveDestination").Value = true;
-            }
-            else 
-            {
-                bb.GetVariable<Variable<int>>("curState").Value = (int)EyeTypeMonsterState.Idle;
-                animator.SetBool("Idle", true);
+                SetBlackboardVariable("originPosition", transform.position);
+                SetBlackboardVariable("originDirection", transform.rotation);
             }
 
-            if ((monsterSetting & MonsterSetting.CanPatrol) == MonsterSetting.CanPatrol) bb.GetVariable<Variable<bool>>("canPatrol").Value = true;
-            if ((monsterSetting & MonsterSetting.IsWork) == MonsterSetting.IsWork) bb.GetVariable<Variable<bool>>("isWork").Value = true;
+            // target -> destination -> work
+            if (HasSetting(EyeTypeMonsterSetting.HaveTarget))
+            {
+                if (TargetNpc != null)
+                {
+                    SetBlackboardVariable("targetNpc", TargetNpc);
+                    SetBlackboardVariable("haveTarget", true);
+                }
+            }
+
+            if (HasSetting(EyeTypeMonsterSetting.HaveDestination))
+            {
+                if (Destination != null)
+                {
+                    SetBlackboardVariable("destination", Destination.position);
+                    SetBlackboardVariable("haveDestination", true);
+                    Destroy(Destination.gameObject);
+                }
+            }
+
+            SetBlackboardVariable("isWork", HasSetting(EyeTypeMonsterSetting.IsWork));            
         }
     }
 
-    public void MonsterWork()
+    public void MonsterWork(bool isWork)
     {
-        bb.GetVariable<Variable<bool>>("isWork").Value = true;
+        SetBlackboardVariable("isWork", isWork);
+    }
+
+    private void SetBlackboardVariable<T>(string key, T value)
+    {
+        bb.GetVariable<Variable<T>>(key).Value = value;
+    }
+
+    private bool HasSetting(EyeTypeMonsterSetting setting) => (monsterSetting & setting) == setting;
+
+    public void Deactivate()
+    {
+        gameObject.SetActive(false);
     }
 }

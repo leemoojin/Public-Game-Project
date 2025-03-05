@@ -11,7 +11,7 @@ public class MonsterWait : Wait
     public BoolReference canAttack;
 
     public Animator animator;
-
+    public UnitSoundSystem soundSystem;
 
     public override void OnEnter()
     {
@@ -20,8 +20,8 @@ public class MonsterWait : Wait
         if (monsterType.Value == 1)
         {
             curState.Value = (int)EyeTypeMonsterState.Idle;
+            soundSystem.StopStepAudio();
             //Debug.Log($"MonsterWait - OnEnter() - curState idle : {(EyeTypeMonsterState)curState.Value}");
-
             animator.SetBool("Run", false);
             animator.SetBool("Attack", false);
             animator.SetBool("Walk", false);
@@ -30,13 +30,13 @@ public class MonsterWait : Wait
         else if (monsterType.Value == 2)
         {
             curState.Value = (int)EarTypeMonsterState.Idle;
+            soundSystem.StopStepAudio();
             animator.SetBool("Idle", true);
             animator.SetBool("Walk", false);
             animator.SetBool("Run", false);
             animator.SetBool("Focus", false);
             //animator.SetBool("Attack", false);
         }
-
     }
 
     public override NodeResult Execute()

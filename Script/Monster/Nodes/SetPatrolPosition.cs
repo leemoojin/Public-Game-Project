@@ -6,7 +6,7 @@ using UnityEngine;
 [AddComponentMenu("")]
 public class SetPatrolPosition : Leaf
 {
-    public Vector3Reference variableToSetPatrolPos = new Vector3Reference(VarRefMode.DisableConstant);
+    public Vector3Reference variableToSetPatrolPos;
     public Vector3Reference variableToSetOriginPos;
     public TransformReference self;
     public BoolReference variableToSkip;
@@ -64,7 +64,7 @@ public class SetPatrolPosition : Leaf
             _tempPos += _centerPos;
 
             if(_newPos == Vector3.zero) _newPos = _tempPos;
-            else if (Vector3.Distance(_centerPos, _newPos) > Vector3.Distance(_centerPos, _tempPos)) _newPos = _tempPos;
+            if (Vector3.Distance(_centerPos, _newPos) < Vector3.Distance(_centerPos, _tempPos)) _newPos = _tempPos;
 
             if (Vector3.Distance(_centerPos, _newPos) > patrolRangeMin) break;
         }
