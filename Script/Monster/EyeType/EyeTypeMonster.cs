@@ -1,40 +1,19 @@
-using MBT;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class EyeTypeMonster : MonoBehaviour, IDeactivate
+public class EyeTypeMonster : Monster, IDeactivate
 {
-    [field: Header("References")]
+    [field: Header("SO")]
     [field: SerializeField] private EyeTypeMonsterDataSO MonsterData { get; set; }
-    public Blackboard bb;
 
-    [field: Header("State")]
-    public EyeTypeMonsterState curState;
-
-    [field: Header("Animations")]
-    public Animator animator;
-
-    [field: Header("Nav")]
-    public NavMeshAgent agent;
-
-    [field: Header("Setting")]
-    public EyeTypeMonsterSetting monsterSetting;
-    [field: SerializeField] private Transform Destination { get; set; }
-    [field: SerializeField] private Transform TargetNpc { get; set; }
-
-    private void OnEnable()
+    protected override void Start()
     {
-        GameManager.Instance.OnGameover += Deactivate;
+        base.Start();
+        Initialization();
     }
 
-    private void OnDisable()
+    private void Initialization()
     {
-        GameManager.Instance.OnGameover -= Deactivate;
-    }
-
-    private void Start()
-    {
-        if (bb != null)
+        if (BB != null)
         {
             SetBlackboardVariable("findRange", MonsterData.Data.FindRange);
             SetBlackboardVariable("chaseRange", MonsterData.Data.ChaseRange);
@@ -44,7 +23,7 @@ public class EyeTypeMonster : MonoBehaviour, IDeactivate
             SetBlackboardVariable("walkSpeedModifier", MonsterData.Data.WalkSpeedModifier);
             SetBlackboardVariable("runSpeedModifier", MonsterData.Data.RunSpeedModifier);
 
-            if (HasSetting(EyeTypeMonsterSetting.CanPatrol)) SetBlackboardVariable("canPatrol", true);
+            if (HasSetting(MonsterSetting.CanPatrol)) SetBlackboardVariable("canPatrol", true);
             else
             {
                 SetBlackboardVariable("originPosition", transform.position);
@@ -52,7 +31,7 @@ public class EyeTypeMonster : MonoBehaviour, IDeactivate
             }
 
             // target -> destination -> work
-            if (HasSetting(EyeTypeMonsterSetting.HaveTarget))
+            if (HasSetting(MonsterSetting.HaveTarget))
             {
                 if (TargetNpc != null)
                 {
@@ -61,7 +40,7 @@ public class EyeTypeMonster : MonoBehaviour, IDeactivate
                 }
             }
 
-            if (HasSetting(EyeTypeMonsterSetting.HaveDestination))
+            if (HasSetting(MonsterSetting.HaveDestination))
             {
                 if (Destination != null)
                 {
@@ -71,24 +50,7 @@ public class EyeTypeMonster : MonoBehaviour, IDeactivate
                 }
             }
 
-            SetBlackboardVariable("isWork", HasSetting(EyeTypeMonsterSetting.IsWork));            
+            SetBlackboardVariable("isWork", HasSetting(MonsterSetting.IsWork));
         }
-    }
-
-    public void MonsterWork(bool isWork)
-    {
-        SetBlackboardVariable("isWork", isWork);
-    }
-
-    private void SetBlackboardVariable<T>(string key, T value)
-    {
-        bb.GetVariable<Variable<T>>(key).Value = value;
-    }
-
-    private bool HasSetting(EyeTypeMonsterSetting setting) => (monsterSetting & setting) == setting;
-
-    public void Deactivate()
-    {
-        gameObject.SetActive(false);
     }
 }

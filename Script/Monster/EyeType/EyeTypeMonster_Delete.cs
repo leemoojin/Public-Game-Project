@@ -24,7 +24,7 @@ public class EyeTypeMonster_Delete : MonoBehaviour, IDeactivate
     //private bool _isArrival;
 
     [field: Header("Setting")]
-    public MonsterSetting monsterSetting;
+    public MonsterSetting_ monsterSetting;
 
     protected virtual void Start()
     {
@@ -38,7 +38,7 @@ public class EyeTypeMonster_Delete : MonoBehaviour, IDeactivate
             bb.GetVariable<Variable<float>>("walkSpeedModifier").Value = MonsterData.EyeType.WalkSpeedModifier;
             bb.GetVariable<Variable<float>>("runSpeedModifier").Value = MonsterData.EyeType.RunSpeedModifier;
 
-            if ((monsterSetting & MonsterSetting.HaveDestination) == MonsterSetting.HaveDestination)
+            if ((monsterSetting & MonsterSetting_.HaveDestination) == MonsterSetting_.HaveDestination)
             {
                 //Debug.Log($"목적지 이동");
                 // move to destination
@@ -50,7 +50,7 @@ public class EyeTypeMonster_Delete : MonoBehaviour, IDeactivate
                 animator.SetBool("Idle", true);
             }
 
-            if ((monsterSetting & MonsterSetting.HaveTarget) == MonsterSetting.HaveTarget)
+            if ((monsterSetting & MonsterSetting_.HaveTarget) == MonsterSetting_.HaveTarget)
             {
                 if (target != null) bb.GetVariable<Variable<Transform>>("targetDestination").Value = target;
                 bb.GetVariable<Variable<bool>>("haveDestination").Value = true;
@@ -61,8 +61,8 @@ public class EyeTypeMonster_Delete : MonoBehaviour, IDeactivate
                 animator.SetBool("Idle", true);
             }
 
-            if ((monsterSetting & MonsterSetting.CanPatrol) == MonsterSetting.CanPatrol) bb.GetVariable<Variable<bool>>("canPatrol").Value = true;
-            if ((monsterSetting & MonsterSetting.IsWork) == MonsterSetting.IsWork) bb.GetVariable<Variable<bool>>("isWork").Value = true;
+            if ((monsterSetting & MonsterSetting_.CanPatrol) == MonsterSetting_.CanPatrol) bb.GetVariable<Variable<bool>>("canPatrol").Value = true;
+            if ((monsterSetting & MonsterSetting_.IsWork) == MonsterSetting_.IsWork) bb.GetVariable<Variable<bool>>("isWork").Value = true;
         }
 
         //OriginRotation = transform.rotation;
