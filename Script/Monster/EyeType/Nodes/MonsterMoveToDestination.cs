@@ -1,6 +1,5 @@
 using MBT;
 using UnityEngine;
-using UnityEngine.AI;
 
 [AddComponentMenu("")]
 [MBTNode("Example/Monster Move To Destination")]
@@ -14,42 +13,31 @@ public class MonsterMoveToDestination : Leaf
     public BoolReference isOriginPosition;
     public Vector3Reference destination;
 
-    public Animator animator;// monster
-    public NavMeshAgent agent;// monster
+    public Monster monster;
     public float stopDistance = 1f;
-    public UnitSoundSystem soundSystem;// monster
 
     public override void OnEnter()
     {
-        EyeTypeMonsterState state = (EyeTypeMonsterState)curState.Value;
-        if (!state.HasFlag(EyeTypeMonsterState.Move))
+        MonsterState state = (MonsterState)curState.Value;
+        if (!state.HasFlag(MonsterState.Run))
         {
-            soundSystem.StopStepAudio();
-            curState.Value = (int)EyeTypeMonsterState.Move;
+            monster.Sound.StopStepAudio();
+            curState.Value = (int)MonsterState.Run;
         }
-        soundSystem.PlayStepSound((EyeTypeMonsterState)curState.Value);
-        animator.SetBool("Run", true);
-        animator.SetBool("Walk", false);
-        animator.SetBool("Idle", false);
-        animator.SetBool("Attack", false);
-        agent.speed = baseSpeed.Value * runSpeedModifier.Value;
-        agent.isStopped = false;
-        agent.SetDestination(destination.Value);
+        monster.Sound.PlayStepSound((MonsterState)curState.Value);
+        monster.SetAnimation(false, false, true, false, false);
+        monster.agent.speed = baseSpeed.Value * runSpeedModifier.Value;
+        monster.agent.isStopped = false;
+        monster.agent.SetDestination(destination.Value);
     }
 
     public override NodeResult Execute()
     {
         if(isDetect.Value) return NodeResult.success;
-
-        if (soundSystem.GroundChange)
-        {
-            soundSystem.PlayStepSound((EyeTypeMonsterState)curState.Value);
-        }
-
-        if (agent.pathPending) return NodeResult.running;
-        if (agent.hasPath) return NodeResult.running;
-        if (agent.remainingDistance < stopDistance) return NodeResult.success;
-
+        if (monster.Sound.GroundChange) monster.Sound.PlayStepSound((EyeTypeMonsterState)curState.Value);
+        if (monster.agent.pathPending) return NodeResult.running;
+        if (monster.agent.hasPath) return NodeResult.running;
+        if (monster.agent.remainingDistance < stopDistance) return NodeResult.success;
         return NodeResult.failure;
     }
 

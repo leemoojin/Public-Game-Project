@@ -30,6 +30,16 @@ public enum EyeTypeMonsterState
 }
 
 [Flags]
+public enum MonsterState
+{
+    Idle = 1,
+    Walk = 2,
+    Run = 3,
+    Attack = 4,
+    LostTarget = 5,
+}
+
+[Flags]
 public enum MonsterType
 {
     EyeType = 1,
@@ -37,10 +47,21 @@ public enum MonsterType
 }
 
 [Flags]
-public enum MonsterSetting
+public enum MonsterSetting_
 {
     IsWork = 1 << 0,
     CanPatrol = 1 << 1,
     HaveSection = 1 << 2,
     HaveDestination = 1 << 3,
+    HaveTarget = 1 << 4,
+}
+
+[Flags]
+public enum MonsterSetting
+{
+    IsWork = 1 << 0,
+    CanPatrol = 1 << 1,
+    KeepPosition = 1 << 2,
+    HaveDestination = 1 << 3,
+    HaveTarget = 1 << 4,
 }

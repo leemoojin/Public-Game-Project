@@ -1,6 +1,6 @@
 using MBT;
 using UnityEngine;
-using UnityEngine.AI;
+
 [AddComponentMenu("")]
 [MBTNode("Example/Monster Move To Stand Position")]
 public class MonsterMoveToStandPosition : Leaf
@@ -11,38 +11,32 @@ public class MonsterMoveToStandPosition : Leaf
     public BoolReference isDetect;
     public Vector3Reference originPosition;
 
-    public Animator animator;// monster
-    public UnitSoundSystem soundSystem;// monster
-    public NavMeshAgent agent;// monster
+    public Monster monster;
     public float stopDistance = 2f;
 
     public override void OnEnter()
     {
-        EyeTypeMonsterState state = (EyeTypeMonsterState)curState.Value;
-        if (!state.HasFlag(EyeTypeMonsterState.Walk))
+        MonsterState state = (MonsterState)curState.Value;
+        if (!state.HasFlag(MonsterState.Walk))
         {
-            soundSystem.StopStepAudio();
+            monster.Sound.StopStepAudio();
+            curState.Value = (int)MonsterState.Walk;
         }
-        curState.Value = (int)EyeTypeMonsterState.Walk;
-        soundSystem.PlayStepSound((EyeTypeMonsterState)curState.Value);
-        agent.speed = baseSpeed.Value * walkSpeedModifier.Value;
-        animator.SetBool("Run", false);
-        animator.SetBool("Walk", true);
-        animator.SetBool("Idle", false);
-        animator.SetBool("Attack", false);
-        if (agent.isStopped) agent.isStopped = false;
-        agent.SetDestination(originPosition.Value);
+        monster.Sound.PlayStepSound((MonsterState)curState.Value);
+        monster.agent.speed = baseSpeed.Value * walkSpeedModifier.Value;
+        monster.SetAnimation(false, true, false, false, false);
+        monster.agent.isStopped = false;
+        monster.agent.SetDestination(originPosition.Value);
     }
 
     public override NodeResult Execute()
     {
         if(isDetect.Value) return NodeResult.success;
-        if (soundSystem.GroundChange) soundSystem.PlayStepSound((EyeTypeMonsterState)curState.Value);
+        if (monster.Sound.GroundChange) monster.Sound.PlayStepSound((MonsterState)curState.Value);
+        if (monster.agent.pathPending) return NodeResult.running;
+        if (monster.agent.hasPath) return NodeResult.running;
 
-        if (agent.pathPending) return NodeResult.running;
-        if (agent.hasPath) return NodeResult.running;
-
-        if (agent.remainingDistance < stopDistance)
+        if (monster.agent.remainingDistance < stopDistance)
         {
             return NodeResult.success;
         }
@@ -51,12 +45,9 @@ public class MonsterMoveToStandPosition : Leaf
 
     public override void OnExit()
     {
-        curState.Value = (int)EyeTypeMonsterState.Idle;
-        animator.SetBool("Run", false);
-        animator.SetBool("Walk", false);
-        animator.SetBool("Idle", true);
-        animator.SetBool("Attack", false);
-        soundSystem.StopStepAudio();
-        agent.isStopped = true;
+        curState.Value = (int)MonsterState.Idle;
+        monster.SetAnimation(true, false, false, false, false);
+        monster.Sound.StopStepAudio();
+        monster.agent.isStopped = true;
     }
 }

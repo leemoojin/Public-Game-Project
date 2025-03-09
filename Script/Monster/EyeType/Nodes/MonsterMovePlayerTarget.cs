@@ -15,31 +15,23 @@ public class MonsterMovePlayerTarget : MoveToTransform
     public FloatReference attackRange;
     public BoolReference skipValueLostToTarget;
     public BoolReference isOriginPosition;
+    public BoolReference isLost;
 
-    public Animator animator;// monster
-    public UnitSoundSystem soundSystem;// monster
+    public Monster monster;
+    private bool _canAttack;
 
     public override void OnEnter()
     {
         //Debug.Log($"MonsterMovePlayerTarget - OnEnter()");
-
-        if (monsterType.Value == 1)
+        MonsterState state = (MonsterState)curState.Value;
+        if (!state.HasFlag(MonsterState.Run))
         {
-            //Debug.Log($"MonsterMovePlayerTarget - OnEnter() - curState run : {(EyeTypeMonsterState)curState.Value}");
-            EyeTypeMonsterState state = (EyeTypeMonsterState)curState.Value;
-            if (!state.HasFlag(EyeTypeMonsterState.Run))
-            {
-                soundSystem.StopStepAudio();
-                curState.Value = (int)EyeTypeMonsterState.Run;
-            }
-            soundSystem.PlayStepSound((EyeTypeMonsterState)curState.Value);
-            agent.speed = baseSpeed.Value * runSpeedModifier.Value;
-            animator.SetBool("Run", true);
-            animator.SetBool("Walk", false);
-            animator.SetBool("Idle", false);
-            animator.SetBool("Attack", false);
+            monster.Sound.StopStepAudio();
+            curState.Value = (int)MonsterState.Run;
         }
-
+        monster.Sound.PlayStepSound((MonsterState)curState.Value);
+        agent.speed = baseSpeed.Value * runSpeedModifier.Value;
+        monster.SetAnimation(false, false, true, false, false);
         base.OnEnter();
     }
 
@@ -47,25 +39,13 @@ public class MonsterMovePlayerTarget : MoveToTransform
     {
         if (distanceToTarget.Value <= attackRange.Value)
         {
-            //Debug.Log($"MonsterMovePlayerTarget - Execute() - 공격범위");
+            _canAttack = true;
             return NodeResult.success;
         }
 
-        if (skipValueLostToTarget.Value && distanceToTarget.Value >= chaseRange.Value)
-        {
-            //Debug.Log($"MonsterMovePlayerTarget - Execute() - 탐지실패, 거리 벗어남");
-            return NodeResult.failure;
-        }
+        if (skipValueLostToTarget.Value && distanceToTarget.Value >= chaseRange.Value) return NodeResult.failure;
 
-        //if (distanceToTarget.Value >= moveRange.Value)
-        //{
-        //    return NodeResult.failure;
-        //}
-
-        if (soundSystem.GroundChange)
-        {
-            soundSystem.PlayStepSound((EyeTypeMonsterState)curState.Value);
-        }
+        if (monster.Sound.GroundChange) monster.Sound.PlayStepSound((MonsterState)curState.Value);
 
         self.Value.LookAt(destination.Value);
 
@@ -76,11 +56,7 @@ public class MonsterMovePlayerTarget : MoveToTransform
     {
         base.OnExit();
         isOriginPosition.Value = false;
+        if (!_canAttack) isLost.Value = true;
         //Debug.Log($"MonsterMovePlayerTarget - OnExit()");
-        //agent.isStopped = true;
-        //animator.SetBool("Run", false);
-        //animator.SetBool("Walk", false);
-        //animator.SetBool("Idle", true);
-        //animator.SetBool("Attack", false);
     }
 }

@@ -15,19 +15,23 @@ public class EyeTypeAttackSystem : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        //Debug.Log($"hit");
-        if (bb.GetVariable<Variable<int>>("curState").Value != (int)EyeTypeMonsterState.Attack) return;
+        Debug.Log($"EyeTypeAttackSystem - hit");
+        if (bb.GetVariable<Variable<int>>("curState").Value != (int)MonsterState.Attack) return;
+        Debug.Log($"EyeTypeAttackSystem - hit - 공격 상태");
+
         reWork = false;
 
-        if (other.gameObject.layer == 7) 
+        if (other.gameObject.layer == LayerMask.NameToLayer("NPC")) 
         {
+            Debug.Log($"hit npc");
             reWork = true;
             StartNpcAttack(other);
             return;
         }
 
-        if (other.gameObject.layer == 13)
+        if (other.gameObject.layer == LayerMask.NameToLayer("ImportantNPC"))
         {
+            Debug.Log($"hit i npc");
             StartNpcAttack(other);
             return;
         }
@@ -69,17 +73,11 @@ public class EyeTypeAttackSystem : MonoBehaviour
 
     public void Attack()
     {
-        if (_target != null)
-        {
-            _target.OnHitSuccess();
-        }
+        _target?.OnHitSuccess();
     }
 
     public void Attack(IAttackable target)
     {
-        if (target != null)
-        {
-            target.OnHitSuccess();
-        }
+        target?.OnHitSuccess();
     }
 }

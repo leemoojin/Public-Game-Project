@@ -12,11 +12,12 @@ public class MonsterAttack : Leaf
     public BoolReference isWork;
     public IntReference curState;
     public TransformReference target;
+    public TransformReference self;
+
 
     public EyeTypeAttackSystem attackSystem;
-    public Transform self;// monster
-    public UnitSoundSystem soundSystem;// monster
-    public Animator animator;// monster
+    public Monster monster;
+    public NpcUnit npcCache;
     private AnimatorStateInfo stateInfo;
 
     private bool _isNPC;
@@ -24,73 +25,51 @@ public class MonsterAttack : Leaf
 
     public override void OnEnter()
     {
-        soundSystem.StopStepAudio();
-        //Debug.Log($"MonsterAttack - OnEnter() - target : {target.Value}, layer : {target.Value.gameObject.layer}");
-        base.OnEnter();
+        monster.Sound.StopStepAudio();
+        monster.agent.isStopped = true;
+        curState.Value = (int)MonsterState.Attack;
 
-        if (target.Value.gameObject.layer == 3)
+        if (target.Value.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             isWork.Value = false;
             _isNPC = false;
-            isAttacking.Value = true;
-            curState.Value = (int)EyeTypeMonsterState.Idle;
-            Debug.Log($"MonsterAttack - OnEnter() - 플레이어 사망");
-            //GameManager.Instance.Player.JumpScareManager.PlayerDead(JumpScareType.eyeTypeMonster);
-            animator.SetBool("Run", false);
-            animator.SetBool("Walk", false);
-            animator.SetBool("Idle", true);
-            animator.SetBool("Attack", false);
+            //Debug.Log($"MonsterAttack - OnEnter() - 플레이어 사망");
+            monster.SetAnimation(true, false, false, false, false);
             _isGameover = true;
-            //isDetect.Value = false;
             GameManager.Instance.Player.OnHitSuccess(UnitType.EyeTypeMonster);
             //if (target.Value.gameObject.TryGetComponent<IAttackable>(out IAttackable attackable)) attackable.OnHitSuccess(UnitType.EyeTypeMonster);
         }
-        else if (target.Value.gameObject.layer == 7)
+        else if (target.Value.gameObject.layer == LayerMask.NameToLayer("NPC"))
         {
+            //Debug.Log($"MonsterAttack - hit npc");
             isWork.Value = false;
-            LookAtTarget();
+            self.Value.LookAt(target.Value);
 
-            if (target.Value.gameObject.TryGetComponent<NpcUnit>(out NpcUnit npcUnit)) npcUnit.NpcStop();
+            if (npcCache == null) if (target.Value.gameObject.TryGetComponent<NpcUnit>(out NpcUnit npcUnit)) npcUnit.NpcStop();
+            else npcCache.NpcStop();
 
             _isNPC = true;
             isAttacking.Value = true;
-            curState.Value = (int)EyeTypeMonsterState.Attack;
-
-            animator.SetBool("Run", false);
-            animator.SetBool("Walk", false);
-            animator.SetBool("Idle", false);
-            animator.SetBool("Attack", true);
+            monster.SetAnimation(false, false, false, true, false);
             _isGameover = false;
-            //isWork.Value = true;
         }
-        else if (target.Value.gameObject.layer == 13)
+        else if (target.Value.gameObject.layer == LayerMask.NameToLayer("ImportantNPC"))
         {
             isWork.Value = false;
-            LookAtTarget();
+            self.Value.LookAt(target.Value);
 
-            if (target.Value.gameObject.TryGetComponent<NpcUnit>(out NpcUnit npcUnit)) npcUnit.NpcStop();
+            if (npcCache == null) if (target.Value.gameObject.TryGetComponent<NpcUnit>(out NpcUnit npcUnit)) npcUnit.NpcStop();
+            else npcCache.NpcStop();
 
             _isNPC = true;
             isAttacking.Value = true;
-            curState.Value = (int)EyeTypeMonsterState.Attack;
-
-            animator.SetBool("Run", false);
-            animator.SetBool("Walk", false);
-            animator.SetBool("Idle", false);
-            animator.SetBool("Attack", true);
-            //_isGameover = true;
+            monster.SetAnimation(false, false, false, true, false);
             _isGameover = false;
         }
     }
 
     public override NodeResult Execute()
     {
-        //if (target.Value.gameObject.layer == 0 || _isPlayer)
-        //{
-        //    Debug.Log($"MonsterAttack - Execute() - skip");
-        //    return NodeResult.success;
-        //}
-
         if (_isGameover)
         {
             //Debug.Log($"MonsterAttack - Execute() - skip");
@@ -99,7 +78,7 @@ public class MonsterAttack : Leaf
 
         if (_isNPC)
         {
-            stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+            stateInfo = monster.animator.GetCurrentAnimatorStateInfo(0);
             //Debug.Log($"MonsterAttack - Execute() - {stateInfo.IsName("Attack")}, {stateInfo.normalizedTime}");
 
             if (stateInfo.IsName("Attack") && stateInfo.normalizedTime >= 1f)
@@ -116,27 +95,8 @@ public class MonsterAttack : Leaf
                     _isGameover = true;
                     return NodeResult.success;
                 }
-                
             }
         }
-
         return NodeResult.running;
     }
-
-    private void LookAtTarget()
-    {
-        Vector3 direction = target.Value.position - self.position;
-        self.rotation = Quaternion.LookRotation(direction.normalized);
-    }
-
-    //public override void OnExit()
-    //{
-    //    base.OnExit();
-
-    //    Debug.Log($"MonsterAttack - OnExit()");
-    //    //if (_isGameover) return;
-    //    //target.Value = null;
-    //    //isAttacking.Value = false;
-    //    //isDetect.Value = false;
-    //}
 }

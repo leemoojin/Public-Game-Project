@@ -1,38 +1,32 @@
 using MBT;
 using UnityEngine;
-using UnityEngine.AI;
 
 [AddComponentMenu("")]
 [MBTNode("Example/Monster Rest")]
-public class MonsterRest : Wait
+public class MonsterRest : Leaf
 {
     public IntReference curState;
     public BoolReference isDetect;
 
-    public Animator animator;// monster
-    public NavMeshAgent agent;// monster
-    public UnitSoundSystem soundSystem;// monster
+    public Monster monster;
 
     public override void OnEnter()
     {
         //Debug.Log($"MonsterRest - OnEnter");
-        EyeTypeMonsterState state = (EyeTypeMonsterState)curState.Value;
-        if (!state.HasFlag(EyeTypeMonsterState.Idle))
+        MonsterState state = (MonsterState)curState.Value;
+        if (!state.HasFlag(MonsterState.Idle))
         {
-            agent.isStopped = true;
-            soundSystem.StopStepAudio();
+            monster.agent.isStopped = true;
+            monster.Sound.StopStepAudio();
+            curState.Value = (int)MonsterState.Idle;
+
         }
-        curState.Value = (int)EyeTypeMonsterState.Idle;
-        animator.SetBool("Run", false);
-        animator.SetBool("Walk", false);
-        animator.SetBool("Idle", true);
-        animator.SetBool("Attack", false);
-        base.OnEnter();
+        monster.SetAnimation(true, false, false, false, false);
     }
 
     public override NodeResult Execute()
     {
         if (isDetect.Value) return NodeResult.success;
-        return base.Execute();
+        return NodeResult.running;
     }
 }
