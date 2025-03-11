@@ -11,40 +11,34 @@ public class FocusAroundWait : Leaf
     public BoolReference canAttack;
     public FloatReference focusTime;
 
-    public Animator animator;
+    public Monster monster;
 
     private float _timer;
 
-    
-
     public override void OnEnter()
-    {       
-        curState.Value = (int)EarTypeMonsterState.Focus;
+    {
+        monster.Sound.StopStepAudio();
+        curState.Value = (int)MonsterState.Lost;
         isDetect.Value = false;
         _timer = 0f;
-        animator.SetBool("Idle", false);
-        animator.SetBool("Walk", false);
-        animator.SetBool("Run", false);
-        animator.SetBool("Focus", true);
-        //animator.SetBool("Attack", false);
+        monster.SetAnimation(false, false, false, true);
         //Debug.Log($"FocusAroundWait - OnEnter() - isFocusAround : {isFocusAround.Value}, isDetect : {isDetect.Value}");
-
     }
 
     public override NodeResult Execute()
     {
         //Debug.Log($"FocusAroundWait - Execute() - _timer, {_timer}");
 
-        if (canAttack.Value || isDetect.Value || canAttack.Value)
+        if (canAttack.Value || isDetect.Value)
         {
             isFocusAround.Value = false;
             return NodeResult.success;
         }
 
-
         if (_timer >= focusTime.Value)
         {
             //Debug.Log($"FocusAroundWait - Execute() - _timer, {_timer}, focusTime : {focusTime.Value}");
+            isFocusAround.Value = false;
             return NodeResult.success;
         }
 
@@ -52,11 +46,9 @@ public class FocusAroundWait : Leaf
         return NodeResult.running;
     }
 
-
-    public override void OnExit()
-    {
-        //Debug.Log($"FocusAroundWait - OnExit()");
-
-        if(_timer >= focusTime.Value) isFocusAround.Value = false;
-    }
+    //public override void OnExit()
+    //{
+    //    //Debug.Log($"FocusAroundWait - OnExit()");
+    //    if(_timer >= focusTime.Value) isFocusAround.Value = false;
+    //}
 }

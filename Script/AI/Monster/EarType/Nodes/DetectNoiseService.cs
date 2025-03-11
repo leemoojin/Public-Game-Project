@@ -1,5 +1,4 @@
 using MBT;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +6,6 @@ using UnityEngine;
 [MBTNode("Example/Detect Noise Service")]
 public class DetectNoiseService : Service
 {
-    //public TransformReference variableToSet = new TransformReference(VarRefMode.DisableConstant);
     public BoolReference variableToSetBool;// isNoiseDetect
     public BoolReference isFocusAround;
     public BoolReference canAttack;
@@ -15,24 +13,23 @@ public class DetectNoiseService : Service
     public FloatReference curDetectNoise;// check board
     public TransformReference self;
     public IntReference curState;
-    public FloatReference detectRange;
+    public FloatReference detectRangeMax;
+    public FloatReference detectRangeMin;
     public FloatReference detectNoiseMin;
     public FloatReference detectNoiseMax;
 
-    // SO
-    public LayerMask targetMask = -1;
-    //public float detectRange = 60f;// SO
-    //public float detectNoiseMax = 9f;// SO
-    //public float detectNoiseMin = 3;// SO
-
-    public GameObject biggestNoiseObj;// private
+    public LayerMask targetMask;
+    public GameObject biggestNoiseObj;
     public List<Collider> noiseMakers = new List<Collider>();
+    public Monster monster;
+
+    private SoundData _growlsSD;
+    private bool _isFindPlayer;
 
     public override void OnEnter()
     {
+        if (_growlsSD == null) _growlsSD = monster.Sound.FindOtherSoundData("Growls");
         base.OnEnter();
-        //Debug.Log($"DetectNoiseService - OnEnter() - isFocusAround : {isFocusAround.Value}");
-
     }
 
     public override void Task()
@@ -43,44 +40,50 @@ public class DetectNoiseService : Service
 
     private void Detect()
     {
-        //Debug.Log("DetectNoiseService - Task()");
         noiseMakers.Clear();
         biggestNoiseObj = null;
         curDetectNoise.Value = 0f;
+        _isFindPlayer = false;
 
-        Collider[] colliders = Physics.OverlapSphere(self.Value.position, detectRange.Value, targetMask);
+        Collider[] colliders = Physics.OverlapSphere(self.Value.position, detectRangeMax.Value, targetMask);
 
         foreach (Collider col in colliders)
         {
-            if (col.tag == "NoiseMaker" || col.tag == "Player")
-            {
-                noiseMakers.Add(col);
-                CompareNoise(col.gameObject);
-            }
+            if (col.gameObject.layer == LayerMask.NameToLayer("Player")) _isFindPlayer = true;
+            noiseMakers.Add(col);
+            CompareNoise(col.gameObject);
         }
 
+        UpdateMonsterSound();
         if (biggestNoiseObj == null) return;
-
-        // check noiseAmount
         CheckNoiseAmount(biggestNoiseObj);
     }
 
+    private void UpdateMonsterSound()
+    {
+        if (_isFindPlayer)
+        {
+            if (!_growlsSD.audioSource.isPlaying) monster.Sound.OtherSoundPlay(_growlsSD);
+            else _growlsSD.audioSource.volume = 1f;
+        }
+        else if (!_isFindPlayer && _growlsSD.audioSource.isPlaying) monster.Sound.StopAudioSource(_growlsSD);
+    }
 
     private void CheckNoiseAmount(GameObject noiseMaker)
-    {       
-        if (Vector3.Distance(self.Value.position, noiseMaker.transform.position) <= detectRange.Value && curDetectNoise.Value >= detectNoiseMax.Value)
-        {
-            if (curState.Value == (int)EarTypeMonsterState_.FocusAround) isFocusAround.Value = false;
+    {
+        float distance = Vector3.Distance(self.Value.position, noiseMaker.transform.position);
 
+        if (distance <= detectRangeMax.Value && curDetectNoise.Value >= detectNoiseMax.Value)
+        {
+            if (curState.Value == (int)MonsterState.Lost) isFocusAround.Value = false;
             variableToSetBool.Value = true;
             targetPos.Value = biggestNoiseObj.transform.position;
             return;
         }
 
-        if (Vector3.Distance(self.Value.position, noiseMaker.transform.position) <= detectRange.Value * 0.5f && curDetectNoise.Value >= detectNoiseMin.Value)
+        if (distance <= detectRangeMin.Value && curDetectNoise.Value >= detectNoiseMin.Value)
         {
-            if (curState.Value == (int)EarTypeMonsterState_.FocusAround) isFocusAround.Value = false;
-
+            if (curState.Value == (int)MonsterState.Lost) isFocusAround.Value = false;
             variableToSetBool.Value = true;
             targetPos.Value = biggestNoiseObj.transform.position;
             return;
@@ -89,19 +92,15 @@ public class DetectNoiseService : Service
 
     private void CompareNoise(GameObject noiseMaker)
     {
-        float noiseAmount = noiseMaker.GetComponent<INoise>().CurNoiseAmount;
-
-        if (curDetectNoise.Value < noiseAmount)
+        if (noiseMaker.TryGetComponent<INoise>(out INoise noiseComponent))
         {
-            curDetectNoise.Value = noiseAmount;
-            biggestNoiseObj = noiseMaker;
+            float noiseAmount = noiseComponent.CurNoiseAmount;
+
+            if (curDetectNoise.Value < noiseAmount)
+            {
+                curDetectNoise.Value = noiseAmount;
+                biggestNoiseObj = noiseMaker;
+            }
         }
-    }
-
-    public override void OnExit()
-    {
-        base.OnExit();
-        //Debug.Log($"DetectNoiseService - OnExit() - isFocusAround : {isFocusAround.Value}");
-
     }
 }
