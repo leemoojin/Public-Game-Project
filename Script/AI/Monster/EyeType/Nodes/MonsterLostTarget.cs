@@ -20,8 +20,8 @@ public class MonsterLostTarget : Wait
 
     public override void OnEnter()
     {
-        Debug.Log($"MonsterLostTarget - OnEnter");
-        curState.Value = (int)MonsterState.LostTarget;
+        //Debug.Log($"MonsterLostTarget - OnEnter");
+        curState.Value = (int)MonsterState.Lost;
 
         _isWait = true;
         monster.agent.isStopped = true;

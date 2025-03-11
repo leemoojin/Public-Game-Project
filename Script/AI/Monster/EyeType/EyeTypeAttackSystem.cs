@@ -15,10 +15,7 @@ public class EyeTypeAttackSystem : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"EyeTypeAttackSystem - hit");
         if (bb.GetVariable<Variable<int>>("curState").Value != (int)MonsterState.Attack) return;
-        Debug.Log($"EyeTypeAttackSystem - hit - 공격 상태");
-
         reWork = false;
 
         if (other.gameObject.layer == LayerMask.NameToLayer("NPC")) 

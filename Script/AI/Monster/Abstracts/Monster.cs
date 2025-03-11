@@ -7,19 +7,17 @@ public abstract class Monster : MonoBehaviour, IDeactivate
     [field: Header("References")]
     [field: SerializeField] protected Blackboard BB { get; set; }
     [field: SerializeField] public GameObject PatrolPosition { get; set; }
+    [field: SerializeField] public UnitSoundSystem Sound { get; set; }
 
     [field: Header("Animations")]
+    [field: SerializeField] public MonsterAnimationData MonsterAnimationData { get; set; }
     public Animator animator;
 
     [field: Header("Nav")]
     public NavMeshAgent agent;
 
-    [field: Header("State")]
-    public EyeTypeMonsterState curState;
-
     [field: Header("Setting")]
     public MonsterSetting monsterSetting;
-    [field: SerializeField] protected Transform Destination { get; set; }
     [field: SerializeField] protected Transform TargetNpc { get; set; }
 
     private Patrol Patrol { get; set; }
@@ -29,15 +27,33 @@ public abstract class Monster : MonoBehaviour, IDeactivate
         Patrol = new Patrol(this);
         if (PatrolPosition != null) Patrol.PatrolTransforms = PatrolPosition.GetComponentsInChildren<Transform>();
         Patrol.SetPatrolPositions(HasSetting(MonsterSetting.KeepPosition));
+        MonsterAnimationData.Initialize();
     }
 
     protected virtual void Start()
     {
         if (HasSetting(MonsterSetting.KeepPosition))
         {
-            Destroy(PatrolPosition.gameObject);
+            Destroy(PatrolPosition);
             PatrolPosition = null;
         }
+    }
+
+    public void SetAnimation(bool idle, bool walk, bool run, bool attack, bool lost)
+    {
+        animator.SetBool(MonsterAnimationData.IdleParameterHash, idle);
+        animator.SetBool(MonsterAnimationData.WalkParameterHash, walk);
+        animator.SetBool(MonsterAnimationData.RunParameterHash, run);
+        animator.SetBool(MonsterAnimationData.AttackParameterHash, attack);
+        animator.SetBool(MonsterAnimationData.LostTargetParameterHash, lost);
+    }
+
+    public void SetAnimation(bool idle, bool walk, bool run, bool lost)
+    {
+        animator.SetBool(MonsterAnimationData.IdleParameterHash, idle);
+        animator.SetBool(MonsterAnimationData.WalkParameterHash, walk);
+        animator.SetBool(MonsterAnimationData.RunParameterHash, run);
+        animator.SetBool(MonsterAnimationData.LostTargetParameterHash, lost);
     }
 
     public Vector3 GetPatrolPosition()
@@ -57,10 +73,10 @@ public abstract class Monster : MonoBehaviour, IDeactivate
 
     public void MonsterWork(bool isWork)
     {
-        SetBlackboardVariable("isWork", isWork);
+        SetVariable("isWork", isWork);
     }
 
-    protected void SetBlackboardVariable<T>(string key, T value)
+    protected void SetVariable<T>(string key, T value)
     {
         BB.GetVariable<Variable<T>>(key).Value = value;
     }

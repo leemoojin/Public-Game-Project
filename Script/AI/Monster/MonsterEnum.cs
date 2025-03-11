@@ -36,7 +36,7 @@ public enum MonsterState
     Walk = 2,
     Run = 3,
     Attack = 4,
-    LostTarget = 5,
+    Lost = 5,
 }
 
 [Flags]

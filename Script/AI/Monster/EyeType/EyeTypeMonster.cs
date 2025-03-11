@@ -1,9 +1,12 @@
 using UnityEngine;
 
-public class EyeTypeMonster : Monster, IDeactivate
+public class EyeTypeMonster : Monster
 {
     [field: Header("SO")]
     [field: SerializeField] private EyeTypeMonsterDataSO MonsterData { get; set; }
+
+    [field: Header("Destination")]
+    [field: SerializeField] protected Transform Destination { get; set; }
 
     protected override void Start()
     {
@@ -15,19 +18,19 @@ public class EyeTypeMonster : Monster, IDeactivate
     {
         if (BB != null)
         {
-            SetBlackboardVariable("findRange", MonsterData.Data.FindRange);
-            SetBlackboardVariable("chaseRange", MonsterData.Data.ChaseRange);
-            SetBlackboardVariable("attackRange", MonsterData.Data.AttackRange);
-            SetBlackboardVariable("viewAngle", MonsterData.Data.ViewAngle);
-            SetBlackboardVariable("baseSpeed", MonsterData.Data.BaseSpeed);
-            SetBlackboardVariable("walkSpeedModifier", MonsterData.Data.WalkSpeedModifier);
-            SetBlackboardVariable("runSpeedModifier", MonsterData.Data.RunSpeedModifier);
+            SetVariable("findRange", MonsterData.Data.FindRange);
+            SetVariable("chaseRange", MonsterData.Data.ChaseRange);
+            SetVariable("attackRange", MonsterData.Data.AttackRange);
+            SetVariable("viewAngle", MonsterData.Data.ViewAngle);
+            SetVariable("baseSpeed", MonsterData.Data.BaseSpeed);
+            SetVariable("walkSpeedModifier", MonsterData.Data.WalkSpeedModifier);
+            SetVariable("runSpeedModifier", MonsterData.Data.RunSpeedModifier);
 
-            if (HasSetting(MonsterSetting.CanPatrol)) SetBlackboardVariable("canPatrol", true);
+            if (HasSetting(MonsterSetting.CanPatrol)) SetVariable("canPatrol", true);
             else
             {
-                SetBlackboardVariable("originPosition", transform.position);
-                SetBlackboardVariable("originDirection", transform.rotation);
+                SetVariable("originPosition", transform.position);
+                SetVariable("originDirection", transform.rotation);
             }
 
             // target -> destination -> work
@@ -35,8 +38,8 @@ public class EyeTypeMonster : Monster, IDeactivate
             {
                 if (TargetNpc != null)
                 {
-                    SetBlackboardVariable("targetNpc", TargetNpc);
-                    SetBlackboardVariable("haveTarget", true);
+                    SetVariable("targetNpc", TargetNpc);
+                    SetVariable("haveTarget", true);
                 }
             }
 
@@ -44,13 +47,13 @@ public class EyeTypeMonster : Monster, IDeactivate
             {
                 if (Destination != null)
                 {
-                    SetBlackboardVariable("destination", Destination.position);
-                    SetBlackboardVariable("haveDestination", true);
+                    SetVariable("destination", Destination.position);
+                    SetVariable("haveDestination", true);
                     Destroy(Destination.gameObject);
                 }
             }
 
-            SetBlackboardVariable("isWork", HasSetting(MonsterSetting.IsWork));
+            SetVariable("isWork", HasSetting(MonsterSetting.IsWork));
         }
     }
 }

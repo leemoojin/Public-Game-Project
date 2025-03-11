@@ -34,7 +34,7 @@ public class MonsterMoveToDestination : Leaf
     public override NodeResult Execute()
     {
         if(isDetect.Value) return NodeResult.success;
-        if (monster.Sound.GroundChange) monster.Sound.PlayStepSound((EyeTypeMonsterState)curState.Value);
+        if (monster.Sound.GroundChange) monster.Sound.PlayStepSound((MonsterState)curState.Value);
         if (monster.agent.pathPending) return NodeResult.running;
         if (monster.agent.hasPath) return NodeResult.running;
         if (monster.agent.remainingDistance < stopDistance) return NodeResult.success;

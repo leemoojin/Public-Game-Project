@@ -33,11 +33,9 @@ public class MonsterAttack : Leaf
         {
             isWork.Value = false;
             _isNPC = false;
-            //Debug.Log($"MonsterAttack - OnEnter() - 플레이어 사망");
             monster.SetAnimation(true, false, false, false, false);
             _isGameover = true;
             GameManager.Instance.Player.OnHitSuccess(UnitType.EyeTypeMonster);
-            //if (target.Value.gameObject.TryGetComponent<IAttackable>(out IAttackable attackable)) attackable.OnHitSuccess(UnitType.EyeTypeMonster);
         }
         else if (target.Value.gameObject.layer == LayerMask.NameToLayer("NPC"))
         {
@@ -70,11 +68,7 @@ public class MonsterAttack : Leaf
 
     public override NodeResult Execute()
     {
-        if (_isGameover)
-        {
-            //Debug.Log($"MonsterAttack - Execute() - skip");
-            return NodeResult.success;
-        }
+        if (_isGameover) return NodeResult.success;
 
         if (_isNPC)
         {
