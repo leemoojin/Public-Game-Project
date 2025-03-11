@@ -9,20 +9,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94c2dc06f3e67ec439569bb9ee9f1aff, type: 3}
-  m_Name: MonsterDataSO
+  m_Script: {fileID: 11500000, guid: 3416740d7144fe641967ab4b5dc8d690, type: 3}
+  m_Name: EarTypeMonsterDataSO_Parking
   m_EditorClassIdentifier: 
-  <EyeType>k__BackingField:
-    <FindRange>k__BackingField: 12.5
-    <ChaseRange>k__BackingField: 17.5
-    <ViewAngle>k__BackingField: 120
-    <BaseSpeed>k__BackingField: 4
-    <WalkSpeedModifier>k__BackingField: 0.7
-    <RunSpeedModifier>k__BackingField: 2
-    <AttackRange>k__BackingField: 2
-  <EarType>k__BackingField:
-    <DetectRange>k__BackingField: 60
-    <ChaseRange>k__BackingField: 30
+  <Data>k__BackingField:
+    <DetectRangeMax>k__BackingField: 110
+    <DetectRangeMin>k__BackingField: 15
     <DetectNoiseMax>k__BackingField: 9
     <DetectNoiseMin>k__BackingField: 2.5
     <BaseSpeed>k__BackingField: 1.3
