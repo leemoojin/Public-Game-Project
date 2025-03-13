@@ -46,7 +46,7 @@ public class MonsterDetectUnitService : Service
     private void DetectTargets()
     {
         _detectList.Clear();
-        float range = curState.Value == (int)EarTypeMonsterState.Run ? chaseRange.Value : findRange.Value;
+        float range = curState.Value == (int)MonsterState.Run ? chaseRange.Value : findRange.Value;
         bool foundTarget = false;
 
         for (int i = 0; i <= _rayCount; i++)

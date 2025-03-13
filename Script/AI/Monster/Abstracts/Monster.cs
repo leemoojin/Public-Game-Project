@@ -39,6 +39,16 @@ public abstract class Monster : MonoBehaviour, IDeactivate
         }
     }
 
+    public bool MoveToDestination(Vector3 vector3)
+    {
+        if (NavMesh.SamplePosition(vector3, out NavMeshHit hit, Vector3.Distance(transform.position, vector3), NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+            return false;
+        }
+        else return true;
+    }
+
     public void SetAnimation(bool idle, bool walk, bool run, bool attack, bool lost)
     {
         animator.SetBool(MonsterAnimationData.IdleParameterHash, idle);

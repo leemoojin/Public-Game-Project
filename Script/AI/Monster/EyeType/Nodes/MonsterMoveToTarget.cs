@@ -14,9 +14,11 @@ public class MonsterMoveToTarget : MoveToTransform
     public BoolReference isOriginPosition;
 
     public Monster monster;
+    private bool _isMoveFail;
 
     public override void OnEnter()
     {
+        _isMoveFail = false;
         MonsterState state = (MonsterState)curState.Value;
         if (!state.HasFlag(MonsterState.Run))
         {
@@ -31,14 +33,25 @@ public class MonsterMoveToTarget : MoveToTransform
 
     public override NodeResult Execute()
     {
+        if (_isMoveFail) return NodeResult.failure;
         if (isDetect.Value) return NodeResult.success;
         if (monster.Sound.GroundChange) monster.Sound.PlayStepSound((MonsterState)curState.Value);
-        return base.Execute();
+
+        time += Time.deltaTime;
+        if (time > updateInterval)
+        {
+            time = 0;
+            _isMoveFail = monster.MoveToDestination(destination.Value.position);
+        }
+
+        if (agent.pathPending) return NodeResult.running;
+        if (agent.hasPath) return NodeResult.running;
+        if (agent.remainingDistance < stopDistance) return NodeResult.success;
+        return NodeResult.failure;
     }
 
     public override void OnExit()
     {
-        //Debug.Log($"MonsterMoveToDestination - OnExit()");
         base.OnExit();
         haveTarget.Value = false;
         isOriginPosition.Value = false;

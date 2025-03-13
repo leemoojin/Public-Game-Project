@@ -15,9 +15,11 @@ public class MonsterMoveToDestination : Leaf
 
     public Monster monster;
     public float stopDistance = 1f;
+    private bool _isMoveFail;
 
     public override void OnEnter()
     {
+        _isMoveFail = false;
         MonsterState state = (MonsterState)curState.Value;
         if (!state.HasFlag(MonsterState.Run))
         {
@@ -28,11 +30,12 @@ public class MonsterMoveToDestination : Leaf
         monster.SetAnimation(false, false, true, false, false);
         monster.agent.speed = baseSpeed.Value * runSpeedModifier.Value;
         monster.agent.isStopped = false;
-        monster.agent.SetDestination(destination.Value);
+        _isMoveFail = monster.MoveToDestination(destination.Value);
     }
 
     public override NodeResult Execute()
     {
+        if(_isMoveFail) return NodeResult.failure;
         if(isDetect.Value) return NodeResult.success;
         if (monster.Sound.GroundChange) monster.Sound.PlayStepSound((MonsterState)curState.Value);
         if (monster.agent.pathPending) return NodeResult.running;
@@ -43,7 +46,6 @@ public class MonsterMoveToDestination : Leaf
 
     public override void OnExit()
     {
-        //Debug.Log($"MonsterMoveToDestination - OnExit()");
         haveDestination.Value = false;
         isOriginPosition.Value = false;
     }

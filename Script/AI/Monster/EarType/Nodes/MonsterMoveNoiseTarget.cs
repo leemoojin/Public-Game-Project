@@ -21,10 +21,11 @@ public class MonsterMoveNoiseTarget : Leaf
     private SoundData _growlsSD;
     private SoundData _screamSD;
     private float time = 0;
-
+    private bool _isMoveFail;
 
     public override void OnEnter()
     {
+        _isMoveFail = false;
         if (_growlsSD == null || _screamSD == null)
         {
             _growlsSD = monster.Sound.FindOtherSoundData("Growls");
@@ -53,6 +54,7 @@ public class MonsterMoveNoiseTarget : Leaf
 
     public override NodeResult Execute()
     {
+        if (_isMoveFail) return NodeResult.failure;
         if (canAttack.Value) return NodeResult.success;
         if (monster.Sound.GroundChange) monster.Sound.PlayStepSound((MonsterState)curState.Value);
 
@@ -60,16 +62,10 @@ public class MonsterMoveNoiseTarget : Leaf
         if (time > updateInterval)
         {
             time = 0;
-            monster.agent.SetDestination(destination.Value);
+            _isMoveFail = monster.MoveToDestination(destination.Value);
         }
-        if (monster.agent.pathPending)
-        {
-            return NodeResult.running;
-        }
-        if (monster.agent.hasPath)
-        {
-            return NodeResult.running;
-        }
+        if (monster.agent.pathPending) return NodeResult.running;
+        if (monster.agent.hasPath) return NodeResult.running;
         if (monster.agent.remainingDistance < stopDistance)
         {
             isNoiseDetect.Value = false;

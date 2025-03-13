@@ -35,11 +35,7 @@ public class MonsterMoveToStandPosition : Leaf
         if (monster.Sound.GroundChange) monster.Sound.PlayStepSound((MonsterState)curState.Value);
         if (monster.agent.pathPending) return NodeResult.running;
         if (monster.agent.hasPath) return NodeResult.running;
-
-        if (monster.agent.remainingDistance < stopDistance)
-        {
-            return NodeResult.success;
-        }
+        if (monster.agent.remainingDistance < stopDistance) return NodeResult.success;
         return NodeResult.failure;
     }
 

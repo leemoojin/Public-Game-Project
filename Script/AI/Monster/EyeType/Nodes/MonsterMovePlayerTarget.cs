@@ -19,10 +19,12 @@ public class MonsterMovePlayerTarget : MoveToTransform
 
     public Monster monster;
     private bool _canAttack;
+    private bool _isMoveFail;
 
     public override void OnEnter()
     {
         //Debug.Log($"MonsterMovePlayerTarget - OnEnter()");
+        _isMoveFail = false;
         MonsterState state = (MonsterState)curState.Value;
         if (!state.HasFlag(MonsterState.Run))
         {
@@ -37,6 +39,7 @@ public class MonsterMovePlayerTarget : MoveToTransform
 
     public override NodeResult Execute()
     {
+        if (_isMoveFail) return NodeResult.failure;
         if (distanceToTarget.Value <= attackRange.Value)
         {
             _canAttack = true;
@@ -44,12 +47,20 @@ public class MonsterMovePlayerTarget : MoveToTransform
         }
 
         if (skipValueLostToTarget.Value && distanceToTarget.Value >= chaseRange.Value) return NodeResult.failure;
-
         if (monster.Sound.GroundChange) monster.Sound.PlayStepSound((MonsterState)curState.Value);
-
         self.Value.LookAt(destination.Value);
 
-        return base.Execute();
+        time += Time.deltaTime;
+        if (time > updateInterval)
+        {
+            time = 0;
+            _isMoveFail = monster.MoveToDestination(destination.Value.position);
+        }
+
+        if (agent.pathPending) return NodeResult.running;
+        if (agent.hasPath) return NodeResult.running;
+        if (agent.remainingDistance < stopDistance) return NodeResult.success;
+        return NodeResult.failure;
     }
 
     public override void OnExit()

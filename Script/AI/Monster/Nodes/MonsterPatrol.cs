@@ -16,9 +16,11 @@ public class MonsterPatrol : Leaf
     public Monster monster;
     public float stopDistance = 2f;
     private Vector3 _destination;
+    private bool _isMoveFail;
 
     public override void OnEnter()
     {
+        _isMoveFail = false;
         MonsterState state = (MonsterState)curState.Value;
         if (state != MonsterState.Walk)
         {
@@ -33,12 +35,12 @@ public class MonsterPatrol : Leaf
         _destination = monster.GetPatrolPosition();
         monster.agent.speed = baseSpeed.Value * walkSpeedModifier.Value;
         monster.agent.isStopped = false;
-        MoveToDestination(_destination);
+        _isMoveFail = monster.MoveToDestination(_destination);
     }
 
     public override NodeResult Execute()
     {
-        if (skipValueIsDetect.Value || canAttack.Value) return NodeResult.failure;
+        if (skipValueIsDetect.Value || canAttack.Value || _isMoveFail) return NodeResult.failure;
         if (monster.Sound.GroundChange) monster.Sound.PlayStepSound((MonsterState)curState.Value);
         if (monster.agent.pathPending) return NodeResult.running;
         if (monster.agent.hasPath) return NodeResult.running;
@@ -49,5 +51,6 @@ public class MonsterPatrol : Leaf
     private void MoveToDestination(Vector3 vector3)
     {
         if (NavMesh.SamplePosition(vector3, out NavMeshHit hit, Vector3.Distance(transform.position, vector3), NavMesh.AllAreas)) monster.agent.SetDestination(hit.position);
+        else _isMoveFail = true;
     }
 }
