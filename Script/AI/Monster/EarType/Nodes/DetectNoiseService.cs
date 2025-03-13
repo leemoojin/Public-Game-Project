@@ -20,11 +20,13 @@ public class DetectNoiseService : Service
 
     public LayerMask targetMask;
     public GameObject biggestNoiseObj;
-    public List<Collider> noiseMakers = new List<Collider>();
+    public List<Collider> noiseMakers = new List<Collider>(80);
     public Monster monster;
 
     private SoundData _growlsSD;
     private bool _isFindPlayer;
+    private Collider[] _detectColliders = new Collider[80];
+    private const int MaxIterations = 5;
 
     public override void OnEnter()
     {
@@ -45,13 +47,23 @@ public class DetectNoiseService : Service
         curDetectNoise.Value = 0f;
         _isFindPlayer = false;
 
-        Collider[] colliders = Physics.OverlapSphere(self.Value.position, detectRangeMax.Value, targetMask);
+        int count = 0;
+        int iteration = 0;
 
-        foreach (Collider col in colliders)
+        while (iteration < MaxIterations)
         {
-            if (col.gameObject.layer == LayerMask.NameToLayer("Player")) _isFindPlayer = true;
-            noiseMakers.Add(col);
-            CompareNoise(col.gameObject);
+            count = Physics.OverlapSphereNonAlloc(self.Value.position, detectRangeMax.Value, _detectColliders, targetMask);
+            if (count < _detectColliders.Length) break;
+            _detectColliders = new Collider[_detectColliders.Length * 2];
+            noiseMakers = new List<Collider>(_detectColliders.Length * 2);
+            iteration++;
+        }
+
+        for (int i = 0; i < count; i++)
+        {
+            noiseMakers.Add(_detectColliders[i]);
+            if (_detectColliders[i].gameObject.layer == LayerMask.NameToLayer("Player")) _isFindPlayer = true;
+            CompareNoise(_detectColliders[i].gameObject);
         }
 
         UpdateMonsterSound();
